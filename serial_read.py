@@ -1,3 +1,32 @@
+import serial as s
+
+# Replace 'COM3' with the actual serial port your Arduino is connected to
+serial_port = 'COM12'
+
+# Replace 9600 with the baud rate your Arduino is using
+baud_rate = 9600
+
+# Open the serial port
+ser = s.Serial(serial_port, baud_rate)
+
+try:
+    while True:
+        # Read a line from the serial port and decode it
+        line = ser.readline()
+
+        # Print the received data
+        print(line)
+
+except KeyboardInterrupt:
+    # Close the serial port when the script is interrupted (Ctrl+C)
+    ser.close()
+
+
+
+
+
+
+'''
 # Credit from https://www.youtube.com/watch?v=PFPwcolQho0&t=743s
 
 from typing import List, Tuple
@@ -29,6 +58,7 @@ def get_from_serial(port: s.Serial) -> Tuple[List, List]:
                 y_axis = []
                 flag = 1
                 continue
+            
             elif (cmd == 3):
                 print("End of array")
                 if flag == 1:
@@ -64,6 +94,4 @@ def get_from_serial(port: s.Serial) -> Tuple[List, List]:
 if __name__ == "__main__":
     port = s.Serial("COM12", 115200)
     print(get_from_serial(port))
-
-
-
+'''
