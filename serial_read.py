@@ -9,6 +9,13 @@ while True:
     # Read the second array
     data2 = ser.read(40)  # Adjust the number based on the size of your second array
 
+    '''
+    // Each number in array is 32 bits or 4 bytes
+    // Therefore array of 10 integer is 320 bits or 40 bytes
+
+    int array1[] = {1,2,3,4,5,6,7,8,9,10};
+    int array2[] = {10,20,30,40,50,60,70,80,90,100};
+    '''
 
     # Convert the received bytes back to integers
     received_array1 = [int.from_bytes(data1[i:i+2], byteorder='little') for i in range(0, 20, 2)]
