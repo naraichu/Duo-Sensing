@@ -1,64 +1,19 @@
 import serial
-import time
 
-
-ser = serial.Serial('COM12', 115200, timeout = 1)  # Replace 'COMx' with the actual port your Arduino is connected to
-
-
-try:
-    time.sleep(1)
-    while True:
-        # Check if there is data available in the input buffer
-        if ser.in_waiting > 0:
-            # Read the data from the serial port
-            data = ser.readline().decode(encoding = "utf-8").strip()
-            
-            # Process or print the received data
-            print("Received data:", data)
-        
-        # Add a small delay to avoid high CPU usage
-        time.sleep(0.005)
-
-except KeyboardInterrupt:
-    # Close the serial port on program exit
-    ser.close()
-    print("Serial port closed.")
-
-
-
-'''
-def read_serial():
-    while True:
-        if ser.readable():
-            try:
-                time.sleep(0.001)
-                data = ser.readline().decode(encoding= "utf-8").strip()
-                return data
-
-            except UnicodeDecodeError as e:
-                print(f"Error decoding data: {e}")
-                # Add additional handling if needed, such as clearing the serial buffer
-                ser.reset_input_buffer()
-
-try:
-    while True:
-        read_value = read_serial()
-        if read_value is not None:
-            print(read_value)
-            #print("Value:", read_value)
-            # Do something with the float value
-
-except KeyboardInterrupt:
-    ser.close()
-    print("Serial connection closed.")
-'''
-
-'''
-ser = serial.Serial("COM12", 115200)
+ser = serial.Serial('COM12', 115200)  # Replace 'COMX' with the appropriate serial port on your computer
 
 while True:
-    ser.write(1.encode())
-    time.sleep(1)
-    ser.write("END".encode())
-    time.sleep(1)
-'''
+    # Read the first array
+    data1 = ser.read(40)  # Assuming each integer is 2 bytes (int) and there are 5 elements in the array
+
+    # Read the second array
+    data2 = ser.read(40)  # Adjust the number based on the size of your second array
+
+
+    # Convert the received bytes back to integers
+    received_array1 = [int.from_bytes(data1[i:i+2], byteorder='little') for i in range(0, 20, 2)]
+    received_array2 = [int.from_bytes(data2[i:i+2], byteorder='little') for i in range(20, 40, 2)]
+
+    # Print the received arrays
+    print("Received Array 1:", received_array1)
+    print("Received Array 2:", received_array2)
