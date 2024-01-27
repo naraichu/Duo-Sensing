@@ -11,8 +11,8 @@ float alpha = 0.5;  // You can adjust this value based on your filtering needs
 
 // Declare int array as a data packets to be sent to serial
 // Each number in array is 32 bits or 4 bytes
-int freq_array[numFreq + 1];
-int amplitude_array[numFreq + 1];
+//int freq_array[numFreq + 1];
+int amplitude_array[numFreq + 2];
 
 
 void setup() {
@@ -49,20 +49,21 @@ void loop() {
     // Modified value to be smaller
     result = (amplitude * 0.5); // int round it
 
-    freq_array[freq] = freq;
+    //freq_array[freq] = freq;
     amplitude_array[freq] = int(round(result));
     delayMicroseconds(5); // 0.005 sec
 
     // Display value in Arduino
-    /*
+    
     Serial.print(int(freq));
-    Serial.print(",");
+    Serial.print(", ");
     Serial.println(int(round(result)));
     //Serial.println(int(round(amplitude)));
-    */
+    
   }
+  amplitude_array[numFreq + 1] = -100;
+  // Serial.write((uint8_t*)freq_array, sizeof(freq_array));
   Serial.write((uint8_t*)amplitude_array, sizeof(amplitude_array));
-  delay(1000);
+  delay(500);
 
 }
-
