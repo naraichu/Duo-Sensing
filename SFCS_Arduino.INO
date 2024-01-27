@@ -1,4 +1,4 @@
-// Adapt from https://github.com/Illutron/AdvancedTouchSensing/tree/master
+// This code has been adapt from https://github.com/Illutron/AdvancedTouchSensing/tree/master
 
 #define SET(x,y) (x |=(1<<y))				//-Bit set/clear macros
 #define CLR(x,y) (x &= (~(1<<y)))       		//-+
@@ -6,13 +6,11 @@
 
 
 // Low-pass filter coefficients
-float alpha = 0.2;  // You can adjust this value based on your filtering needs
-
+float alpha = 0.3;  // You can adjust this value based on your filtering needs
 
 // Declare int array as a data packets to be sent to serial
-// Each number in array is 32 bits or 4 bytes
-//int freq_array[numFreq + 1];
 int amplitude_array[numFreq + 2];
+
 
 
 void setup() {
@@ -21,20 +19,14 @@ void setup() {
   ICR1 = 110;                 //
   OCR1A = 55;                 //
 
-  pinMode(9, OUTPUT);        //-Signal generator pin
-  pinMode(8, OUTPUT);        //-Sync (test) pin
+  pinMode(9, OUTPUT);         //-Signal generator pin
+  pinMode(8, OUTPUT);         //-Sync (test) pin
 
-  pinMode(2, OUTPUT);        // LED pin for serial indication
-
-  Serial.begin(115200);
+  Serial.begin(115200);       // Setup baud rate
 }
 
 
 void loop() {
-  // Start data stream
-  float amplitude;
-  //float result;
-
   for (unsigned int freq = 0; freq <= numFreq + 1; freq++) {
     int v = analogRead(0);      //-Read response signal
     CLR(TCCR1B, 0);             //-Stop generator
@@ -43,27 +35,20 @@ void loop() {
     OCR1A = freq / 2;           //-+
     SET(TCCR1B, 0);             //-Restart generator
 
-    // Simple Low-pass filter
-    amplitude = amplitude * alpha + (float) (v) * alpha;
+    // Simple Low-pass filter (LPF)
+    float amplitude = amplitude * alpha + (float) (v) * alpha;
 
-    // Modified value to be smaller
-    //amplitude = (amplitude * 0.8); // int round it
-
-    //freq_array[freq] = freq;
+    // Round and cast amplitude float to integer and store in array
     amplitude_array[freq] = int(round(amplitude));
-    delayMicroseconds(5); // 0.005 sec
 
-    // Display value in Arduino
-    /*
-    Serial.print(int(freq));
-    Serial.print(", ");
-    Serial.println(int(round(result)));
-    //Serial.println(int(round(amplitude)));
-    */
+    // 0.005 sec delay
+    delayMicroseconds(5);
     
   }
-  amplitude_array[numFreq + 1] = -100;
-  // Serial.write((uint8_t*)freq_array, sizeof(freq_array));
+  // Add -100 for simple parity check
+  amplitude_array[numFreq + 1] = -100; 
+
+  // Encode array into byte package for serial
   Serial.write((uint8_t*)amplitude_array, sizeof(amplitude_array));
   delay(200);
 
