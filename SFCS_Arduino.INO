@@ -2,42 +2,22 @@
 
 #define SET(x,y) (x |=(1<<y))				//-Bit set/clear macros
 #define CLR(x,y) (x &= (~(1<<y)))       		//-+
+#define numFreq  200 // Number of frequency being swept (Max at 200)
 
-float amplitude;
-float result;
-float freq;
-int sizeOfArray = 190;  // Maximum at 200
-
-int cmd = 0;
 
 // Low-pass filter coefficients
 float alpha = 0.5;  // You can adjust this value based on your filtering needs
 
+
+// Declare int array as a data packets to be sent to serial
 // Each number in array is 32 bits or 4 bytes
-// Therefore array of 10 integer is 320 bits or 40 bytes
-int array1[] = {1,2,3,4,5,6,7,8,9,10};
-int array2[] = {10,20,30,40,50,60,70,80,90,100};
+int freq_array[numFreq + 1];
+int amplitude_array[numFreq + 1];
 
 
 void setup() {
-  Serial.begin(115200);
-}
-
-void loop() {
-  // Send the first array
-  Serial.write((uint8_t*)array1, sizeof(array1));
-
-  // Send the second array
-  Serial.write((uint8_t*)array2, sizeof(array2));
-  delay(100); // Add a delay to avoid flooding the serial port
-}
-
-
-
-/*
-void setup() {
-  TCCR1A = 0b10000010;        //-Set up frequency generator (130)
-  TCCR1B = 0b00011001;        //-+ (25)
+  TCCR1A = 0b10000010;        //-Set up frequency generator
+  TCCR1B = 0b00011001;        //-+
   ICR1 = 110;                 //
   OCR1A = 55;                 //
 
@@ -52,8 +32,10 @@ void setup() {
 
 void loop() {
   // Start data stream
-  unsigned int freq;
-  for (unsigned int freq = 0; freq <= sizeOfArray; freq++) {
+  float amplitude;
+  float result;
+
+  for (unsigned int freq = 0; freq <= numFreq + 1; freq++) {
     int v = analogRead(0);      //-Read response signal
     CLR(TCCR1B, 0);             //-Stop generator
     TCNT1 = 0;                  //-Reload new frequency
@@ -64,30 +46,23 @@ void loop() {
     // Simple Low-pass filter
     amplitude = amplitude * alpha + (float) (v) * alpha;
 
-    // Make value larger by 10^2
-    result = (amplitude / 2.0);
+    // Modified value to be smaller
+    result = (amplitude * 0.5); // int round it
 
+    freq_array[freq] = freq;
+    amplitude_array[freq] = int(round(result));
+    delayMicroseconds(5); // 0.005 sec
+
+    // Display value in Arduino
+    /*
     Serial.print(int(freq));
     Serial.print(",");
     Serial.println(int(round(result)));
     //Serial.println(int(round(amplitude)));
-
-    delayMicroseconds(5); // 0.005 sec
+    */
   }
+  Serial.write((uint8_t*)amplitude_array, sizeof(amplitude_array));
+  delay(1000);
+
 }
-*/
-/*
-void loop() {
-  while (Serial.available() > 0) {
-    cmd = Serial.read();
-
-    if (cmd == "START") {
-      digitalWrite(2, HIGH);
-    }
-    if (cmd == "END") {
-      digitalWrite(2, LOW);
-    }
-
-  }
-}*/
 
