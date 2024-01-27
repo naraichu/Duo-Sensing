@@ -6,7 +6,7 @@
 
 
 // Low-pass filter coefficients
-float alpha = 0.5;  // You can adjust this value based on your filtering needs
+float alpha = 0.2;  // You can adjust this value based on your filtering needs
 
 
 // Declare int array as a data packets to be sent to serial
@@ -33,7 +33,7 @@ void setup() {
 void loop() {
   // Start data stream
   float amplitude;
-  float result;
+  //float result;
 
   for (unsigned int freq = 0; freq <= numFreq + 1; freq++) {
     int v = analogRead(0);      //-Read response signal
@@ -47,23 +47,24 @@ void loop() {
     amplitude = amplitude * alpha + (float) (v) * alpha;
 
     // Modified value to be smaller
-    result = (amplitude * 0.5); // int round it
+    //amplitude = (amplitude * 0.8); // int round it
 
     //freq_array[freq] = freq;
-    amplitude_array[freq] = int(round(result));
+    amplitude_array[freq] = int(round(amplitude));
     delayMicroseconds(5); // 0.005 sec
 
     // Display value in Arduino
-    
+    /*
     Serial.print(int(freq));
     Serial.print(", ");
     Serial.println(int(round(result)));
     //Serial.println(int(round(amplitude)));
+    */
     
   }
   amplitude_array[numFreq + 1] = -100;
   // Serial.write((uint8_t*)freq_array, sizeof(freq_array));
   Serial.write((uint8_t*)amplitude_array, sizeof(amplitude_array));
-  delay(500);
+  delay(200);
 
 }
