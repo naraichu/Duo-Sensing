@@ -3,6 +3,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 
+# NOTE for lab visit
+# The circuit especially in inductor may cause the value to be saturated above 1023
+
 
 # Input number of frequency being swept
 freq_len = 200
@@ -18,10 +21,11 @@ ser = serial.Serial('COM12', 115200)
 x_axis = np.arange(freq_len + 1)
 
 
+
 # Initialise matplotlib
 fig, ax = plt.subplots()
 line, = ax.plot([], [], 'o', markersize = 1)  # Initialize an empty line
-ax.set(xlim=[0, freq_len], ylim=[0, 800], xlabel='Frequency', ylabel='Amplitude')
+ax.set(xlim=[0, freq_len + 1], ylim=[0, 1200], xlabel='Frequency', ylabel='Amplitude')
 
 
 
@@ -44,6 +48,15 @@ def read_serial_data():
                 print(">> Invalid data")
                 ser.close()
                 ser.open()
+
+                '''
+                May want to change by sending the previous valid y_axis
+                '''
+                
+                # Generate zero values of amplitude
+                y_axis = np.zeros(freq_len + 1, dtype = int)
+                return y_axis
+
 
     except KeyboardInterrupt:
         # Close the serial connection when the program is interrupted
@@ -76,35 +89,23 @@ if __name__ == "__main__":
 
 
 '''
-// Stable against this Arduino Uno R3 code
-
-//                              10n
-// PIN 9 --[10k]-+-----10mH---+--||-- OBJECT
-//               |            |
-//              3.3k          |
-//               |            V 1N4148 diode
-//              GND           |
-//                            |
-//Analog 0 ---+------+--------+
-//            |      |
-//          100pf   1MOmhm
-//            |      |
-//           GND    GND
+// This is the version that works successfully with Python
 
 
 // This code has been adapt from https://github.com/Illutron/AdvancedTouchSensing/tree/master
 
 #define SET(x,y) (x |=(1<<y))				//-Bit set/clear macros
-#define CLR(x,y) (x &= (~(1<<y)))       		//-+
+#define CLR(x,y) (x &= (~(1<<y)))       		// |
+#define TOG(x,y) (x^=(1<<y))            		//-+
+
 #define numFreq  200 // Number of frequency being swept (Max at 200)
 
 
 // Low-pass filter coefficients
-float alpha = 0.3;  // You can adjust this value based on your filtering needs
+float alpha = 0.5;  // You can adjust this value based on your filtering needs
 
 // Declare int array as a data packets to be sent to serial
 int amplitude_array[numFreq + 2];
-
 
 
 void setup() {
@@ -136,7 +137,7 @@ void loop() {
     amplitude_array[freq] = int(round(amplitude));
 
     // 0.005 sec delay
-    delayMicroseconds(5);
+    delayMicroseconds(1);
   }
 
   // Add -100 for simple parity check
@@ -144,7 +145,8 @@ void loop() {
 
   // Encode array into byte package for serial
   Serial.write((uint8_t*)amplitude_array, sizeof(amplitude_array));
-  delay(200);
+  delay(250);
 
+  TOG(PORTB,0);            //-Toggle pin 8 after each sweep (good for scope)
 }
 '''
