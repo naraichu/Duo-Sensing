@@ -9,8 +9,6 @@ array_len = 200
 # offset is 2 because for 0 and -100
 byte_len = (array_len + 2) * 2
 
-# Declare frequency array
-x_axis = np.arange(array_len)
 
 # Declare port number and baudrate
 ser = serial.Serial('COM12', 115200)
@@ -29,9 +27,10 @@ def read_serial_data():
             # Check if the data is correct
             if is_data_valid(array):
                 array = np.delete(array, -1)  # Remove -100 (last value) from array
-  
-                animate(array)
 
+                # received_serial()
+
+                # Output result
                 print(array)
                 print("\n")
 
