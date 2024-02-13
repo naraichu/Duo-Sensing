@@ -1,12 +1,14 @@
 // This code has been adapt from https://github.com/Illutron/AdvancedTouchSensing/tree/master
 
 #define SET(x,y) (x |=(1<<y))				//-Bit set/clear macros
-#define CLR(x,y) (x &= (~(1<<y)))       		//-+
+#define CLR(x,y) (x &= (~(1<<y)))       		// |
+#define TOG(x,y) (x^=(1<<y))            		//-+
+
 #define numFreq  200 // Number of frequency being swept (Max at 200)
 
 
 // Low-pass filter coefficients
-float alpha = 0.3;  // You can adjust this value based on your filtering needs
+float alpha = 0.5;  // You can adjust this value based on your filtering needs
 
 // Declare int array as a data packets to be sent to serial
 int amplitude_array[numFreq + 2];
@@ -42,14 +44,15 @@ void loop() {
     amplitude_array[freq] = int(round(amplitude));
 
     // 0.005 sec delay
-    delayMicroseconds(5);
-    
+    delayMicroseconds(1);
   }
+
   // Add -100 for simple parity check
-  amplitude_array[numFreq + 1] = -100; 
+  amplitude_array[numFreq + 1] = -100;
 
   // Encode array into byte package for serial
   Serial.write((uint8_t*)amplitude_array, sizeof(amplitude_array));
-  delay(200);
+  delay(250);
 
+  TOG(PORTB,0);            //-Toggle pin 8 after each sweep (good for scope)
 }
