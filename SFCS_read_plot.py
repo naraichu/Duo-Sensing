@@ -3,8 +3,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 
-# NOTE for lab visit
-# The circuit especially in inductor may cause the value to be saturated above 1023
+# NOTE
+# Adjust potentiometer on the circuit to reduce input signal from 5.12V to 3.00V
 
 
 # Input number of frequency being swept
@@ -15,7 +15,7 @@ freq_len = 200
 byte_len = (freq_len + 2) * 2
 
 # Declare port number and baudrate
-ser = serial.Serial('COM12', 115200)
+ser = serial.Serial('COM14', 115200)
 
 # Generate frequency array (+1 because of 0)
 x_axis = np.arange(freq_len + 1)
@@ -25,7 +25,7 @@ x_axis = np.arange(freq_len + 1)
 # Initialise matplotlib
 fig, ax = plt.subplots()
 line, = ax.plot([], [], 'o', markersize = 1)  # Initialize an empty line
-ax.set(xlim=[0, freq_len + 1], ylim=[0, 1200], xlabel='Frequency', ylabel='Amplitude')
+ax.set(xlim = [0, freq_len + 1], ylim = [0, 1100], xlabel = 'Frequency', ylabel = 'Amplitude')
 
 
 
@@ -36,7 +36,7 @@ def read_serial_data():
             data = ser.read(byte_len)
             
             # Convert the received bytes back to signed integers
-            y_axis = np.array([int.from_bytes(data[i:i+2], byteorder='little', signed=True) for i in range(0, byte_len, 2)])
+            y_axis = np.array([int.from_bytes(data[i:i+2], byteorder = 'little', signed = True) for i in range(0, byte_len, 2)])
             
             # Check if the data is correct
             if is_data_valid(y_axis):
@@ -77,6 +77,7 @@ def update(frame):
 
 
 if __name__ == "__main__":
+    line.set_colour('Blue')
     line, = ax.plot(x_axis, read_serial_data())
     ani = FuncAnimation(fig, update, frames = None, interval = 200, cache_frame_data = False)
 
