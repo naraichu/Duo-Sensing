@@ -1,3 +1,9 @@
+/*
+For experimentation
+Calibrate value to 0 is not good as the sensitive value drops
+*/
+
+
 #include <LapX9C10X.h>
 
 // Analog read voltage pins
@@ -23,7 +29,7 @@ LapX9C10X R2(INC_R2, UDP_R2, CS_R2, LAPX9C10X_X9C103);
 LapX9C10X R3(INC_R3, UDP_R3, CS_R3, LAPX9C10X_X9C103);
 
 // External resitors used (kΩ)
-float ext_res = 22.0;
+float ext_res = 22.0 + 10.0;
 
 // Voltage value of Top and Bottom bridge
 float volt_AB = 0.00;
@@ -32,11 +38,17 @@ float volt_CD = 0.00;
 // Volttage difference between AB and CD (error value)
 float volt_diff = 0.00;
 
-// Set value using index position with lowest voltage difference
-int set_value = 50;
+// Same as volt_diff
+float error = 0.00;
 
-// Store volt_diff in the array and use index as 'count'
-float volt_array [100+1];
+// Voltage value of bending;
+float bend =  0.00;
+
+// Set value using index position with lowest voltage difference
+int set = 60;
+
+// Store volt_diff in the array and use index as 'x'
+float volt_array [101];
 
 
 // Calibration button to balance the bridge to 2.5V
@@ -58,87 +70,11 @@ void setup() {
   delay(5000); // Give time for IC to setup and ready
 
   // Initilised IC with preset value
-  R1.set(set_value);
-  R2.set(set_value);
-  R3.set(set_value);
+  R1.set(set);
+  R2.set(set);
+  R3.set(set);
   
   Serial.println("<<-- System is ready -->>");
-}
-
-
-float ReadVoltage(int pin) {
-  int raw = analogRead(pin);
-  float volt = raw * (5.0 / 1023.0);
-  return volt;
-}
-
-
-
-void loop() {
-  // Display all of the results
-  ShowValue();
-  
-  // Read button state and flag when pressed
-  ReadButton();
-
-  // If true then calibrate the process
-  if (need_cali) {
-    for(int count = 0; count <= 100; count++) {
-
-      // Set same resistance value to 3 IC
-      R1.set(count);
-      R2.set(count);
-      R3.set(count);
-
-      volt_AB = ReadVoltage(point_AB);      // Reading voltage at point AB
-      volt_CD = ReadVoltage(point_CD);      // Reading voltage at point CD
-      volt_diff = fabs(volt_CD - volt_AB);  // Voltage different (error rate)
-
-
-      volt_array[count] = volt_diff;        // Store voltage difference (error rate) in array
-    }
-
-    error = volt_array[0];                  // Assume that 1st element is the lowest
-
-    for (int i = 0; i <= 100; i++) {        // Finding lowest error and set (index) values
-      if (volt_array[i] < error) {
-        error = fabs(volt_array[i]);        // Store lowest error rate
-        set_value = i;                      // Store set value (index) of the lowest error rate
-      }
-    }
-    // Set the new resistance
-    R1.set(set_value);
-    R2.set(set_value);
-    R3.set(set_value);
-
-    // Flag boolean back to stop calibration process
-    need_cali = false;
-
-    Serial.println(">> Calibration complete...");
-  }
-}
-
-
-void ShowValue() {
-  volt_AB = ReadVoltage(point_AB);      // Reading voltage at point AB
-  volt_CD = ReadVoltage(point_CD);      // Reading voltage at point CD
-  volt_diff = fabs(volt_CD - volt_AB);  // Voltage different (error rate)
-
-  
-  Serial.print(set_value);
-  Serial.print("\t");
-
-  Serial.print(R3.getK() + ext_res);
-  Serial.print("\t");
-
-  Serial.print(volt_AB);
-  Serial.print("\t");
-
-  Serial.print(volt_CD);
-  Serial.print("\t");
-  
-  Serial.println(fabs(volt_diff - error));
-  delay(50);
 }
 
 
@@ -152,7 +88,87 @@ void ReadButton() {
 }
 
 
+float ReadVoltage(int pin) {
+  int raw = analogRead(pin);
+  float volt = raw * (5.0 / 1023.0);
+  return volt;
+}
 
 
 
+void loop() {
+  ShowValue();         // Display all of the results
+  ReadButton();        // Read button state and flag when pressed
 
+  if (need_cali) {
+    Serial.println(">> Calibrating now...");
+    SweepRes();
+  }
+}
+
+
+void ShowValue() {
+  volt_AB = ReadVoltage(point_AB);
+  volt_CD = ReadVoltage(point_CD);
+  volt_diff = fabs(volt_CD - volt_AB);
+
+  bend = fabs(volt_diff - error);
+
+  Serial.print(set);
+  Serial.print("\t");
+  Serial.print(volt_AB);
+  Serial.print("\t");
+  Serial.print(volt_CD);
+  Serial.print("\t");
+  Serial.print(bend);
+  Serial.println("\t");
+  delay(50);
+}
+
+
+
+void SweepRes() {
+  for (int i = 0; i <= 100; i++){
+    R1.set(i);
+    R2.set(i);
+    R3.set(i);
+
+    volt_AB = ReadVoltage(point_AB);
+    volt_CD = ReadVoltage(point_CD);
+    volt_diff = fabs(volt_CD - volt_AB);
+
+    Serial.print(i);
+    Serial.print("\t");
+    Serial.print(volt_AB);
+    Serial.print("\t");
+    Serial.print(volt_CD);
+    Serial.print("\t");
+    Serial.print(volt_diff);
+    Serial.println("\t");
+    delay(10);
+
+    volt_array[i] = volt_diff;
+
+  }
+
+  error = volt_array[0];
+
+  for (int j = 0; j <= 100; j++) {
+    if (volt_array[j] <= error) {
+      error = volt_array[j];
+      set = j;
+    }
+  }
+
+  R1.set(set);
+  R2.set(set);
+  R3.set(set);
+
+  need_cali = false;
+
+  Serial.print(">> Lowest: ");
+  Serial.print(set);
+  Serial.print("\t");
+  Serial.println(error);
+  Serial.println("___________________________________");
+}
