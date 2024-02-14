@@ -77,7 +77,6 @@ def update(frame):
 
 
 if __name__ == "__main__":
-    line.set_colour('Blue')
     line, = ax.plot(x_axis, read_serial_data())
     ani = FuncAnimation(fig, update, frames = None, interval = 200, cache_frame_data = False)
 

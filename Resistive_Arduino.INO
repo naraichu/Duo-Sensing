@@ -23,15 +23,20 @@ LapX9C10X R2(INC_R2, UDP_R2, CS_R2, LAPX9C10X_X9C103);
 LapX9C10X R3(INC_R3, UDP_R3, CS_R3, LAPX9C10X_X9C103);
 
 // External resitors used (kΩ)
-// Do I need this external resistors?
-float ext_res = 4.7 + 10.0;
+float ext_res = 22.0;
 
 // Voltage value of Top and Bottom bridge
 float volt_AB = 0.00;
 float volt_CD = 0.00;
 
-// Volttage difference between AB and CD
+// Volttage difference between AB and CD (error value)
 float volt_diff = 0.00;
+
+// Set value using index position with lowest voltage difference
+int set_value = 50;
+
+// Store volt_diff in the array and use index as 'count'
+float volt_array [100+1];
 
 
 // Calibration button to balance the bridge to 2.5V
@@ -39,16 +44,23 @@ int cali_button = 13;
 bool need_cali  = false;
 
 
-// Boolean flag when hit at 2.50V
-
 
 void setup() {
   Serial.begin(115200);
   pinMode(cali_button, INPUT);
 
   Serial.println(">> Wait...");
+
   R1.begin(-1);
+  R2.begin(-1);
+  R3.begin(-1);
+
   delay(5000); // Give time for IC to setup and ready
+
+  // Initilised IC with preset value
+  R1.set(set_value);
+  R2.set(set_value);
+  R3.set(set_value);
   
   Serial.println("<<-- System is ready -->>");
 }
@@ -63,63 +75,80 @@ float ReadVoltage(int pin) {
 
 
 void loop() {
+  // Display all of the results
+  ShowValue();
   
-  volt_AB = ReadVoltage(point_AB);
-  volt_CD = ReadVoltage(point_CD);
-  volt_diff = volt_AB - volt_CD;
+  // Read button state and flag when pressed
+  ReadButton();
 
-  
-  Serial.print(volt_AB);
-  Serial.print("\t");
-  Serial.print(volt_CD);
-  Serial.print("\t");
-  Serial.println(volt_diff);
-  
-  delay(50);
+  // If true then calibrate the process
+  if (need_cali) {
+    for(int count = 0; count <= 100; count++) {
 
-  //test();
-
-
-}
-
-
-void SweepRes() {
-  // This sh*t needs to be more sophisticated
-  for (int count = 0; count <= 100; count++) {
-    float value = ReadVoltage(point_CD); // Read volatage in bottom 
-    
-    if (value == 2.50) {
-      break;
-
-      // Equalise the resistance in the bridge
+      // Set same resistance value to 3 IC
       R1.set(count);
       R2.set(count);
       R3.set(count);
 
+      volt_AB = ReadVoltage(point_AB);      // Reading voltage at point AB
+      volt_CD = ReadVoltage(point_CD);      // Reading voltage at point CD
+      volt_diff = fabs(volt_CD - volt_AB);  // Voltage different (error rate)
+
+
+      volt_array[count] = volt_diff;        // Store voltage difference (error rate) in array
     }
-    else {
-      R3.set(count);
-      continue;
+
+    error = volt_array[0];                  // Assume that 1st element is the lowest
+
+    for (int i = 0; i <= 100; i++) {        // Finding lowest error and set (index) values
+      if (volt_array[i] < error) {
+        error = fabs(volt_array[i]);        // Store lowest error rate
+        set_value = i;                      // Store set value (index) of the lowest error rate
+      }
     }
+    // Set the new resistance
+    R1.set(set_value);
+    R2.set(set_value);
+    R3.set(set_value);
+
+    // Flag boolean back to stop calibration process
+    need_cali = false;
+
+    Serial.println(">> Calibration complete...");
   }
 }
 
 
+void ShowValue() {
+  volt_AB = ReadVoltage(point_AB);      // Reading voltage at point AB
+  volt_CD = ReadVoltage(point_CD);      // Reading voltage at point CD
+  volt_diff = fabs(volt_CD - volt_AB);  // Voltage different (error rate)
 
-void test() {
-  for(int count1 = 0; count1 <= 100; count1++) {
-    int read12 = analogRead(2);
-    float voltage12 = read12 * (5.0 / 1023.0);
-    R3.set(count1);
+  
+  Serial.print(set_value);
+  Serial.print("\t");
 
-    Serial.print(count1); // Increment count
-    Serial.print("\t");
-    Serial.print(R1.getK() + ext_res); // Actual resistance value
-    Serial.print("\t");
-    Serial.println(voltage12);  // Actual volatage value
-    delay(25);
+  Serial.print(R3.getK() + ext_res);
+  Serial.print("\t");
+
+  Serial.print(volt_AB);
+  Serial.print("\t");
+
+  Serial.print(volt_CD);
+  Serial.print("\t");
+  
+  Serial.println(fabs(volt_diff - error));
+  delay(50);
+}
+
+
+void ReadButton() {
+  // Check if the button is pressed
+  if (digitalRead(cali_button) == HIGH) {
+    need_cali = true;  // Set the boolean variable to true
+    Serial.println(">> Calibration in progress...");
+    delay(250);
   }
-  Serial.println("_______________________________");
 }
 
 
