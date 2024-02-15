@@ -1,9 +1,3 @@
-/*
-For experimentation
-Calibrate value to 0 is not good as the sensitive value drops
-*/
-
-
 #include <LapX9C10X.h>
 
 // Analog read voltage pins
@@ -48,7 +42,7 @@ float bend =  0.00;
 int set = 60;
 
 // Store volt_diff in the array and use index as 'x'
-float volt_array [101];
+float volt_array [100];
 
 
 // Calibration button to balance the bridge to 2.5V
@@ -112,13 +106,14 @@ void ShowValue() {
   volt_CD = ReadVoltage(point_CD);
   volt_diff = fabs(volt_CD - volt_AB);
 
-  bend = fabs(volt_diff - error);
+  //bend = fabs(volt_diff - error); // What if I remove "error" from the formula
+  bend = fabs(volt_diff); // What if I remove "error" from the formula
 
   Serial.print(set);
   Serial.print("\t");
-  Serial.print(volt_AB);
+  Serial.print(String(volt_AB) + "v");
   Serial.print("\t");
-  Serial.print(volt_CD);
+  Serial.print(String(volt_CD) + "v");
   Serial.print("\t");
   Serial.print(bend);
   Serial.println("\t");
@@ -128,41 +123,41 @@ void ShowValue() {
 
 
 void SweepRes() {
-  for (int i = 0; i <= 100; i++){
+  for (int i = 0; i < 100; i++){
+    R3.set(i);
     R1.set(i);
     R2.set(i);
-    R3.set(i);
 
     volt_AB = ReadVoltage(point_AB);
     volt_CD = ReadVoltage(point_CD);
     volt_diff = fabs(volt_CD - volt_AB);
 
+    volt_array[i] = volt_diff;
+
     Serial.print(i);
     Serial.print("\t");
-    Serial.print(volt_AB);
+    Serial.print(String(volt_AB) + "v");
     Serial.print("\t");
-    Serial.print(volt_CD);
+    Serial.print(String(volt_CD) + "v");
     Serial.print("\t");
     Serial.print(volt_diff);
     Serial.println("\t");
     delay(10);
 
-    volt_array[i] = volt_diff;
-
   }
 
   error = volt_array[0];
 
-  for (int j = 0; j <= 100; j++) {
+  for (int j = 0; j < 100; j++) {
     if (volt_array[j] <= error) {
       error = volt_array[j];
       set = j;
     }
   }
 
+  R3.set(set);
   R1.set(set);
   R2.set(set);
-  R3.set(set);
 
   need_cali = false;
 
@@ -172,3 +167,11 @@ void SweepRes() {
   Serial.println(error);
   Serial.println("___________________________________");
 }
+
+
+
+
+
+
+
+
