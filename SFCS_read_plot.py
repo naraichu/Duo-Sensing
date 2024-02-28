@@ -15,11 +15,11 @@ freq_len = 200
 byte_len = (freq_len + 2) * 2
 
 # Declare port number and baudrate
-ser = serial.Serial('COM14', 115200)
+ser = serial.Serial('COM12', 115200)
 
 # Generate frequency array (+1 because of 0)
 x_axis = np.arange(freq_len + 1)
-
+    
 
 
 # Initialise matplotlib

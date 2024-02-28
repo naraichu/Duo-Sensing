@@ -1,57 +1,44 @@
 import serial
+import struct
 import numpy as np
 
-# Input number of frequency being swept
-freq_len = 200
+'''
+Read data from Duo-sensing
+'''
 
-# Number of byte length to be decoded
-# offset is 2 because for 0 and -100
-byte_len = (freq_len + 2) * 2
 
-# Declare port number and baudrate
-ser = serial.Serial('COM14', 115200)
+data_len = 200
 
-# Generate frequency array (+1 because of 0)
-x_axis = np.arange(freq_len + 1)
+byte_len = (data_len + 3) * 2
 
+ser = serial.Serial('COM12', 115200)
 
 
 def read_serial_data():
-    try:
-        while True:
-            # Read data from the serial port
-            data = ser.read(byte_len)
-            
-            # Convert the received bytes back to signed integers
-            y_axis = np.array([int.from_bytes(data[i:i+2], byteorder='little', signed=True) for i in range(0, byte_len, 2)])
-            
-            # Check if the data is correct
-            if is_data_valid(y_axis):
-                y_axis = np.delete(y_axis, -1)  # Remove -100 (last value) from y_axis
-                print("Analog Read: \n")
-                print(y_axis)
-                print("Length: ", len(y_axis))
-                print("\n")
-
-            else:
-                # Close and reopen the serial connection
-                print(">> Invalid data")
-                ser.close()
-                ser.open()
-                
-
-    except KeyboardInterrupt:
-        # Close the serial connection when the program is interrupted
-        print("<-- Port closed -->")
+    # Read data from the serial port
+    data = ser.read(byte_len)
+    
+    # Convert the received bytes back to floats
+    all_array = np.array([struct.unpack('f', data[i:i+4])[0] for i in range(0, byte_len, 4)])
+    
+    # Check if the data is correct
+    if is_data_valid(all_array):
+        all_array = np.delete(all_array, -2)  # Remove -100 from all_array
+        print(all_array)
+    
+    else:
+        # Close and reopen the serial connection
+        print(">> Invalid data")
         ser.close()
+        ser.open()
 
 
-def is_data_valid(y_axis):
-    if y_axis[freq_len + 1] == -100:
+
+def is_data_valid(all_array):
+    if data_len + 3 == len(all_array) and all_array[data_len + 1] == -100.0:
         return True
     else:
         return False
-
 
 
 if __name__ == "__main__":
