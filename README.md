@@ -1,4 +1,4 @@
-# Swept Frequency Capacitive Sensing on Conductive TPU Filament
+# Duo-Tactile: Dynamic Tangible Interaction through Strand Filament with Capacitive and Resistive Sensing
 
 ## Overview
 This repository contains the code and documentation for implementing swept frequency capacitive sensing on conductive TPU (Thermoplastic Polyurethane) filament. Swept frequency capacitive sensing is a technique used to detect changes in capacitance across a range of frequencies, allowing for precise and dynamic touch or proximity sensing.
