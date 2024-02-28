@@ -1,8 +1,8 @@
 #include <LapX9C10X.h>
 
-#define SET(x,y) (x |=(1<<y))				        //-Bit set/clear macros
-#define CLR(x,y) (x &= (~(1<<y)))       		    // |
-#define TOG(x,y) (x^=(1<<y))            		    //-+
+#define SET(x,y) (x |=(1<<y))			//-Bit set/clear macros
+#define CLR(x,y) (x &= (~(1<<y)))       // |
+#define TOG(x,y) (x^=(1<<y))            //-+
 
 
 // Analog read voltage pins
@@ -80,7 +80,7 @@ void setup() {
   R3.begin(-1);
 
   delay(5000);                  // Give time for IC to setup and ready
-  SweepRes();                   // Calibrate the circuit first
+  SweepRes();                   // Calibrate the circuit bridge first
 }
 
 
