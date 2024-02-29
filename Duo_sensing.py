@@ -4,12 +4,6 @@ import time
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 
-
-# NOTE
-# This is the duo-sensing program to read value from both resistive and capacitive sensing.
-
-
-
 # Input number of frequency being swept
 freq_len = 200
 
@@ -24,12 +18,15 @@ ser = serial.Serial('COM12', 115200)
 isStart = False
 
 # Arrays for Capacitive sensing (SFCS)
-cap_x_axis = np.arange(freq_len + 1, dtype = int)
-
+cap_x_axis = np.arange(freq_len + 1, dtype=int)
 
 # Backup value in case there is error in data transmission
 res_back_value = 0
-cap_y_back_axis = np.zeros(freq_len + 2, dtype = int)
+cap_y_back_axis = np.zeros(freq_len + 2, dtype=int)
+
+# Initialised matplotlib for visualisation
+fig, (ax1, ax2) = plt.subplots(2, 1, gridspec_kw = {'hspace': 1.0})
+
 
 
 def read_serial():
@@ -38,30 +35,23 @@ def read_serial():
         while True:
             # Read data from the serial port
             data = ser.read(byte_len)
-            
+
             # Convert the received bytes back to signed integers array
-            all_array = np.array([int.from_bytes(data[i:i + 2], byteorder = 'little', signed = True) for i in range(0, byte_len, 2)])
-            
-            # If valid then seperate data and return
+            all_array = np.array([int.from_bytes(data[i:i + 2], byteorder='little', signed=True) for i in range(0, byte_len, 2)])
+
+            # If valid then separate data and return
             if is_data_valid(all_array):
-                
-                # Seperate data out into each catergory
-                res_value, cap_y_axis = SeperateData(all_array)
-                
+
+                # Separate data out into each category
+                res_value, cap_y_axis = separate_data(all_array)
+
                 # Store latest value as the backup
                 global cap_y_back_axis, res_back_value
                 cap_y_back_axis = cap_y_axis
                 res_back_value = res_value
 
                 # Return reading values
-                # return res_value, cap_y_axis
-
-                
-                # Display Duo-sensing values
-                print("SFCS: ", cap_y_axis)
-                print("Res:", res_value)
-                print("\n")
-                
+                return res_value, cap_y_axis
 
             # If not valid, return last known data
             else:
@@ -70,17 +60,7 @@ def read_serial():
                 ser.open()
 
                 # Return backup values
-                #return res_back_value, cap_y_back_axis
-                
-                
-                # Putput error message
-                print(">> Invalid, display last known values...")
-                
-                # Display last known value of the data
-                print("SFCS: ", cap_y_back_axis)
-                print("Res:", res_back_value)
-                print("\n")
-                
+                return res_back_value, cap_y_back_axis
 
     except KeyboardInterrupt:
         # Close the serial connection when the program is interrupted
@@ -88,15 +68,15 @@ def read_serial():
         ser.close()
 
 
-# Seperate data out from the array into appropriate sensing types
-def SeperateData(all_array):
+# Separate data out from the array into appropriate sensing types
+def separate_data(all_array):
     all_array = np.delete(all_array, -2)    # Pop -100 (last 2 value) out
     res_value = all_array[-1]               # Get the resistive value in last index
     cap_y_axis = np.delete(all_array, -1)   # Pop res_value out
 
     return res_value, cap_y_axis
 
-    
+
 # Check whether the value is valid
 def is_data_valid(all_array):
     if freq_len + 3 == len(all_array) and all_array[freq_len + 1] == -100:
@@ -105,11 +85,50 @@ def is_data_valid(all_array):
         return False
 
 
+# Global variables to keep track of time steps and resistive values
+time_steps = []
+res_values = []
+
+
+def update(frame):
+    # Read new data
+    res_value, cap_y_axis = read_serial()
+
+    # Check if read_serial() returned None
+    if res_value is None or cap_y_axis is None or len(cap_y_axis) != len(cap_x_axis):
+        return
+
+    # Update time steps
+    time_steps.append(frame)
+    # Update resistive values
+    res_values.append(res_value)
+
+    # Update plots
+    ax1.clear()
+    ax1.plot(cap_x_axis, cap_y_axis, 'b-', markersize=1)
+    ax1.set(title='Swept Frequency Capacitive Sensing',
+            xlabel='Frequency',
+            ylabel='Amplitude',
+            xlim=[0, freq_len + 1],
+            ylim=[0, 1100])
+
+    ax2.clear()
+    ax2.plot(time_steps, res_values, 'g-', markersize=1)
+    ax2.set(title='Resistive Sensing',
+            xlabel='Time steps',
+            ylabel='Voltage (10^-2)',
+            xlim=[max(0, frame - 50), max(50, frame)],
+            ylim=[-60, 60])
+
+
+
+
 # Main function
 if __name__ == "__main__":
-
     if not isStart:
         print(">> Waiting 6 seconds for Arduino to setup...")
         time.sleep(6)
         isStart = True
-        read_serial()
+
+    ani = FuncAnimation(fig, update, interval = 100, cache_frame_data = False)
+    plt.show()
