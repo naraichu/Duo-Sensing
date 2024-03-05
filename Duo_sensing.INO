@@ -1,8 +1,8 @@
 #include <LapX9C10X.h>
 
-#define SET(x,y) (x |=(1<<y))			//-Bit set/clear macros
-#define CLR(x,y) (x &= (~(1<<y)))       // |
-#define TOG(x,y) (x^=(1<<y))            //-+
+#define SET(x,y) (x |=(1<<y))				        //-Bit set/clear macros
+#define CLR(x,y) (x &= (~(1<<y)))       		// |
+#define TOG(x,y) (x^=(1<<y))            		//-+
 
 
 // Analog read voltage pins
@@ -85,12 +85,22 @@ void setup() {
 
 
 void loop() {
-  FreqSwept();         // Store capactive sensing values
-  ReadResValue();      // Store resistive sensing values
-  ReadButton();        // Read button state and flag when pressed
+  FreqSwept();                  // Store capactive sensing values
+  ReadResValue();               // Store resistive sensing values
+  ReadButton();                 // Read button state and flag when pressed
 
   // Serial write the int data_array
   Serial.write((uint8_t*)data_array, sizeof(data_array));
+
+  /*
+  // Visualise array in serial monitor
+  for(int a = 0; a < numFreq + 3; a++){
+    Serial.print(a);
+    Serial.print("\t");
+    Serial.println(data_array[a]);
+  }
+  Serial.println("_____________________________________");
+  */
 
   // Can be from 50 to 250
   delay(100);
@@ -135,7 +145,8 @@ void ReadResValue() {
   volt_diff = volt_CD - volt_AB;
 
   // Store resistance sensing value
-  data_array[numFreq + 2] = int(volt_diff * 100);
+  data_array[numFreq + 2] = int((volt_diff) * 100);
+  //data_array[numFreq + 2] = int((volt_diff - error) * 100);
   
   // 0.001 sec delay
   delayMicroseconds(1);
@@ -183,13 +194,13 @@ void SweepRes() {
   error = volt_array[0];                // Assume that 1st element is the lowest
 
   for (int j = 0; j < 100; j++) {
-    if (volt_array[j] <= error) {       // If find lower voltage different then store its set value and error (volt difference)
+    if (volt_array[j] <= error) {       // If find lower voltage then store and set to IC and store as error offset value (volt difference)
       error = volt_array[j];
       set = j;
     }
   }
 
-  // When find optimal, set it to 3 IC
+  // When find optimal value, set it to 3 IC
   R3.set(set);
   R1.set(set);
   R2.set(set);
