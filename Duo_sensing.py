@@ -113,7 +113,7 @@ def update(frame):
     
 
     # Detect peaks in res_array
-    peaks, _ = scipy.signal.find_peaks(res_array, width = 1, distance = 2, threshold = 4)
+    peaks, _ = scipy.signal.find_peaks(res_array, width = 1, distance = 2, threshold = 10)
 
     # Update plots
     ax1.clear()
@@ -131,7 +131,7 @@ def update(frame):
             xlabel='Time steps',
             ylabel='Voltage (10^-2)',
             xlim=[max(0, frame - 50), max(50, frame)],
-            ylim=[-100, 100])
+            ylim=[-60, 150])
 
 # Main function
 if __name__ == "__main__":
