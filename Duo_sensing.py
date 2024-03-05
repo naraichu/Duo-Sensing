@@ -1,8 +1,10 @@
 import serial
 import numpy as np
+import scipy
 import time
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
+
 
 # Input number of frequency being swept
 freq_len = 200
@@ -50,6 +52,9 @@ def read_serial():
                 cap_y_back_axis = cap_y_axis
                 res_back_value = res_value
 
+                # Output resisitive sensing value
+                print("Res: ", res_value)
+
                 # Return reading values
                 return res_value, cap_y_axis
 
@@ -87,25 +92,32 @@ def is_data_valid(all_array):
 
 # Global variables to keep track of time steps and resistive values
 time_steps = []
-res_values = []
+res_array = []
 
 
+
+# Modify the update function to detect peaks and plot markers
 def update(frame):
     # Read new data
     res_value, cap_y_axis = read_serial()
 
     # Check if read_serial() returned None
     if res_value is None or cap_y_axis is None or len(cap_y_axis) != len(cap_x_axis):
-        return
+        return None
+    
 
     # Update time steps
     time_steps.append(frame)
     # Update resistive values
-    res_values.append(res_value)
+    res_array.append(res_value)
+    
+
+    # Detect peaks in res_array
+    peaks, _ = scipy.signal.find_peaks(res_array, width = 1, distance = 2, threshold = 4)
 
     # Update plots
     ax1.clear()
-    ax1.plot(cap_x_axis, cap_y_axis, 'b-', markersize=1)
+    ax1.plot(cap_x_axis, cap_y_axis, 'b-', markersize = 1)
     ax1.set(title='Swept Frequency Capacitive Sensing',
             xlabel='Frequency',
             ylabel='Amplitude',
@@ -113,12 +125,24 @@ def update(frame):
             ylim=[0, 1100])
 
     ax2.clear()
-    ax2.plot(time_steps, res_values, 'g-', markersize=1)
+    ax2.plot(time_steps, res_array, 'g-', markersize = 1)
+    ax2.plot([time_steps[i] for i in peaks], [res_array[i] for i in peaks], 'o')  # Plot peaks with 'x'
     ax2.set(title='Resistive Sensing',
             xlabel='Time steps',
             ylabel='Voltage (10^-2)',
             xlim=[max(0, frame - 50), max(50, frame)],
-            ylim=[-60, 60])
+            ylim=[-100, 100])
+
+# Main function
+if __name__ == "__main__":
+    if not isStart:
+        print(">> Waiting 6 seconds for Arduino to setup...")
+        time.sleep(6)
+        isStart = True
+
+    ani = FuncAnimation(fig, update, interval = 100, cache_frame_data = False)
+    plt.show()
+
 
 
 
