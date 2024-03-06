@@ -71,7 +71,7 @@ def read_serial():
 
                 # Output resistive sensing values
                 print("Act Res: ", res_value)
-                print("    Res: ", res_value)
+                print("    Res: ", res_value - 150)
                 print("___________________________")
 
                 # Return reading values
@@ -124,7 +124,7 @@ def update(frame):
     res_array.append(res_value -150)
 
     # Detect peaks in res_array
-    peaks, _ = scipy.signal.find_peaks(res_array, width=1, distance=2, threshold=80)
+    peaks, _ = scipy.signal.find_peaks(res_array, width=1, distance=2, threshold=50)
 
     # Update plots
     ax1.clear()
