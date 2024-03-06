@@ -53,7 +53,7 @@ def read_serial():
                 res_back_value = res_value
 
                 # Output resisitive sensing value
-                print("Res: ", res_value)
+                print("Act Res: ", res_value)
 
                 # Return reading values
                 return res_value, cap_y_axis
@@ -102,7 +102,7 @@ def update(frame):
     res_value, cap_y_axis = read_serial()
 
     # Check if read_serial() returned None
-    if res_value is None or cap_y_axis is None or len(cap_y_axis) != len(cap_x_axis):
+    if (res_value is None) or (cap_y_axis is None) or (len(cap_y_axis) != len(cap_x_axis)):
         return None
     
 
@@ -113,7 +113,7 @@ def update(frame):
     
 
     # Detect peaks in res_array
-    peaks, _ = scipy.signal.find_peaks(res_array, width = 1, distance = 2, threshold = 10)
+    peaks, _ = scipy.signal.find_peaks(res_array, width = 1, distance = 2, threshold = 50)
 
     # Update plots
     ax1.clear()
@@ -131,7 +131,7 @@ def update(frame):
             xlabel='Time steps',
             ylabel='Voltage (10^-2)',
             xlim=[max(0, frame - 50), max(50, frame)],
-            ylim=[-60, 150])
+            ylim=[-256, 256])
 
 # Main function
 if __name__ == "__main__":
