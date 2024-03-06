@@ -5,6 +5,19 @@ import time
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 
+'''
+#NOTE
+This code is for limb joint wearable (best with knee) which only utlise 
+resistive sensing. The step is count when there a siginificant peak of 
+voltage for a short period of time.
+
+
+#INFO
+External resistors  : 22kΩ
+3D model used       : Square_Net_V2 model
+
+'''
+
 # Input number of frequency being swept
 freq_len = 200
 
@@ -56,8 +69,10 @@ def read_serial():
                 cap_y_back_axis = cap_y_axis
                 res_back_value = res_value
 
-                # Output resistive sensing value
-                print("Res: ", res_value)
+                # Output resistive sensing values
+                print("Act Res: ", res_value)
+                print("    Res: ", res_value)
+                print("___________________________")
 
                 # Return reading values
                 return res_value, cap_y_axis
@@ -105,11 +120,11 @@ def update(frame):
 
     # Update time steps
     time_steps.append(frame)
-    # Update resistive values
-    res_array.append(res_value)
+    # Update resistive values with -150 as the offset translation
+    res_array.append(res_value -150)
 
     # Detect peaks in res_array
-    peaks, _ = scipy.signal.find_peaks(res_array, width=1, distance=2, threshold=50)
+    peaks, _ = scipy.signal.find_peaks(res_array, width=1, distance=2, threshold=80)
 
     # Update plots
     ax1.clear()
