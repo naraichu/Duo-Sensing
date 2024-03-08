@@ -56,8 +56,10 @@ def read_serial():
                 cap_y_back_axis = cap_y_axis
                 res_back_value = res_value
 
-                # Output resistive sensing value
-                print("Res: ", res_value)
+                # Output values
+                print("SFCS  :", cap_y_axis)
+                print("Res   : ", res_value)
+                print("\n")
 
                 # Return reading values
                 return res_value, cap_y_axis
@@ -109,7 +111,7 @@ def update(frame):
     res_array.append(res_value)
 
     # Detect peaks in res_array
-    peaks, _ = scipy.signal.find_peaks(res_array, width=1, distance=2, threshold=50)
+    peaks, _ = scipy.signal.find_peaks(res_array, distance=2, threshold=15)
 
     # Update plots
     ax1.clear()
