@@ -31,6 +31,12 @@ def read_serial_JSON():
     global count
     
     try:
+
+        # Add opening square bracket "[" at the start of the file
+        with open(file_path, "a") as f:
+            f.write("[")
+
+        #while count <= 100:
         while True:
             # Read data from the serial port
             data = ser.read(byte_len)
@@ -47,21 +53,27 @@ def read_serial_JSON():
                 # Increment count by 1
                 count += 1
 
+
                 # Output resistive sensing value
                 print("SFCS   : ", cap_y_axis)
-                print("Action : ", action[0])
+                print("Action : ", action[1])
                 print("Count  : ", count)
                 print("\n")
 
+
+
                 json_dict = {
                     "sfcs_value": cap_y_axis.tolist(),  # Convert NumPy array to list
-                    "action": action[0],
+                    "action": action[1],
                 }
 
                 # Write to JSON
-                with open(file_path, "a") as json_file:  # Open file in append mode
-                    json_file.write(json.dumps(json_dict, indent=1))  # Write JSON string with newline
-                    json_file.write('\n')
+                with open(file_path, "a") as f:  # Open file in append mode
+                    if f.tell() > 1:  # If not the first element, add a comma before appending
+                        f.write(",\n")
+                    json.dump(json_dict, f, separators=(",", ":"))
+                    f.write("\n")
+
 
             # If not valid, return last known data
             else:
@@ -71,6 +83,11 @@ def read_serial_JSON():
 
 
     except KeyboardInterrupt:
+
+        # Add closing square bracket "]" when keyboard interrupt occurs
+        with open(file_path, "a") as f:
+            f.write("\n]")
+
         # Close the serial connection when the program is interrupted
         print("<-- Port closed -->")
         ser.close()
