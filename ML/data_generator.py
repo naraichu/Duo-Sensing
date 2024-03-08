@@ -36,8 +36,8 @@ def read_serial_JSON():
         with open(file_path, "a") as f:
             f.write("[")
 
-        #while count <= 100:
-        while True:
+        while count < 200:
+        #while True:
             # Read data from the serial port
             data = ser.read(byte_len)
 
