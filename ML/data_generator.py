@@ -20,7 +20,7 @@ isStart = False
 file_path = "C:/Users/acer/OneDrive - University of Bath/Subjects/Year 3/CM30082 Individual Project/Arduino_Software/Duo_Tactile_Software/ML/datasets.json"
 
 # Classified actions
-action = ["None", "One_finger", "Two_fingers", "Three_fingers", "Palm"]
+action = ["None", "One finger", "Two fingers", "Three fingers", "Palm", "Full"]
 
 # Count number of datasets being stored
 count = 0
@@ -56,7 +56,7 @@ def read_serial_JSON():
 
                 # Output resistive sensing value
                 print("SFCS   : ", cap_y_axis)
-                print("Action : ", action[1])
+                print("Action : ", action[5])
                 print("Count  : ", count)
                 print("\n")
 
@@ -64,7 +64,7 @@ def read_serial_JSON():
 
                 json_dict = {
                     "sfcs_value": cap_y_axis.tolist(),  # Convert NumPy array to list
-                    "action": action[1],
+                    "action": action[5],
                 }
 
                 # Write to JSON
@@ -80,6 +80,11 @@ def read_serial_JSON():
                 # Restart the serial connection
                 ser.close()
                 ser.open()
+        
+        
+        # Add closing square bracket "]" when keyboard interrupt occurs
+        with open(file_path, "a") as f:
+            f.write("\n]")
 
 
     except KeyboardInterrupt:
