@@ -5,7 +5,7 @@ import pickle
 
 
 # Files path for training data and saving the model
-pickle_path = "C:/Users/acer/OneDrive - University of Bath/Subjects/Year_3/CM30082_Individual_Project/Software/Duo_Tactile_Software/ML/SVM/SFCS_SVM.pkl"
+pickle_path = "C:/Users/acer/OneDrive - University of Bath/Subjects/Year 3/CM30082 Individual Project/Software/Duo_Tactile_Software/ML/SVM/SFCS_SVM.pkl"
 
 
 input_data = [376, 347, 270, 246, 210, 205, 190, 191, 182, 186, 178, 178, 172, 176,

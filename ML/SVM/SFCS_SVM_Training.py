@@ -7,13 +7,14 @@ from sklearn.metrics import accuracy_score
 import pickle
 
 # Files path for training data and saving the model
-json_path = "C:/Users/acer/OneDrive - University of Bath/Subjects/Year_3/CM30082_Individual_Project/Software/Duo_Tactile_Software/ML/datasets.JSON"
-pickle_path = "C:/Users/acer/OneDrive - University of Bath/Subjects/Year_3/CM30082_Individual_Project/Software/Duo_Tactile_Software/ML/SVM/SFCS_SVM.pkl"
+json_path = "C:/Users/acer/OneDrive - University of Bath/Subjects/Year 3/CM30082 Individual Project/Software/Duo_Tactile_Software/ML/datasets.JSON"
+pickle_path = "C:/Users/acer/OneDrive - University of Bath/Subjects/Year 3/CM30082 Individual Project/Software/Duo_Tactile_Software/ML/SVM/SFCS_SVM.pkl"
 
 
 # Load dataset from JSON
 with open(json_path, 'r') as f:
     dataset = json.load(f)
+    print(dataset)
 
 # Extract features and labels from the dataset
 X = np.array([data['sfcs_value'] for data in dataset])
