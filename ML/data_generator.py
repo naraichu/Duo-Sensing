@@ -22,6 +22,9 @@ file_path = "C:/Users/acer/OneDrive - University of Bath/Subjects/Year 3/CM30082
 # Classified actions
 action = ["None", "One finger", "Two fingers", "Three fingers", "Palm", "Full"]
 
+# Index position to tag action
+act = 2
+
 # Count number of datasets being stored
 count = 0
 
@@ -36,7 +39,7 @@ def read_serial_JSON():
         with open(file_path, "a") as f:
             f.write("[")
 
-        while count < 200:
+        while count < 5:
         #while True:
             # Read data from the serial port
             data = ser.read(byte_len)
@@ -56,7 +59,7 @@ def read_serial_JSON():
 
                 # Output resistive sensing value
                 print("SFCS   : ", cap_y_axis)
-                print("Action : ", action[5])
+                print("Action : ", action[act])
                 print("Count  : ", count)
                 print("\n")
 
@@ -64,7 +67,7 @@ def read_serial_JSON():
 
                 json_dict = {
                     "sfcs_value": cap_y_axis.tolist(),  # Convert NumPy array to list
-                    "action": action[5],
+                    "action": action[act],
                 }
 
                 # Write to JSON

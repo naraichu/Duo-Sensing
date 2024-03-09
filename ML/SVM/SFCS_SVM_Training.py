@@ -6,11 +6,9 @@ from sklearn.svm import SVC
 from sklearn.metrics import accuracy_score
 import pickle
 
-
 # Files path for training data and saving the model
-json_path = "C:/Users/acer/OneDrive - University of Bath/Subjects/Year 3/CM30082 Individual Project/Arduino_Software/Duo_Tactile_Software/ML/datasets.json"
-pickle_path = "C:/Users/acer/OneDrive - University of Bath/Subjects/Year 3/CM30082 Individual Project/Arduino_Software/Duo_Tactile_Software/ML/SVM/SFCS_SVM.pkl"
-
+json_path = "C:/Users/acer/OneDrive - University of Bath/Subjects/Year_3/CM30082_Individual_Project/Software/Duo_Tactile_Software/ML/datasets.JSON"
+pickle_path = "C:/Users/acer/OneDrive - University of Bath/Subjects/Year_3/CM30082_Individual_Project/Software/Duo_Tactile_Software/ML/SVM/SFCS_SVM.pkl"
 
 
 # Load dataset from JSON
@@ -29,8 +27,8 @@ sc = StandardScaler()
 X_train = sc.fit_transform(X_train)
 X_test = sc.transform(X_test)
 
-# Train SVM with RBF kernel
-svm_classifier = SVC(kernel='rbf', random_state=42)
+# Train SVM with polynomial kernel (degree=3 is default)
+svm_classifier = SVC(kernel='poly', C=2.0, degree=3, coef0=1.0, random_state=42)
 svm_classifier.fit(X_train, y_train)
 
 # Save the trained model using pickle
