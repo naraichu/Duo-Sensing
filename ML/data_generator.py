@@ -3,6 +3,14 @@ import numpy as np
 import time
 import json
 
+
+'''
+#NOTE
+When have time, develop a code that automatically remove open "[" when
+appen new data
+
+'''
+
 # Input number of frequency being swept
 freq_len = 200
 
@@ -17,17 +25,16 @@ ser = serial.Serial('COM12', 115200)
 isStart = False
 
 # File path that JSON is stored
-file_path = "C:/Users/acer/OneDrive - University of Bath/Subjects/Year 3/CM30082 Individual Project/Arduino_Software/Duo_Tactile_Software/ML/datasets.json"
+json_path = "C:/Users/acer/OneDrive - University of Bath/Subjects/Year 3/CM30082 Individual Project/Software/Duo_Tactile_Software/ML/datasets.JSON"
 
 # Classified actions
 action = ["None", "One finger", "Two fingers", "Three fingers", "Palm", "Full"]
 
 # Index position to tag action
-act = 2
+act = 5
 
 # Count number of datasets being stored
 count = 0
-
 
 
 def read_serial_JSON():
@@ -36,10 +43,10 @@ def read_serial_JSON():
     try:
 
         # Add opening square bracket "[" at the start of the file
-        with open(file_path, "a") as f:
+        with open(json_path, "a") as f:
             f.write("[")
 
-        while count < 5:
+        while count < 200:
         #while True:
             # Read data from the serial port
             data = ser.read(byte_len)
@@ -56,22 +63,23 @@ def read_serial_JSON():
                 # Increment count by 1
                 count += 1
 
-
                 # Output resistive sensing value
                 print("SFCS   : ", cap_y_axis)
                 print("Action : ", action[act])
                 print("Count  : ", count)
                 print("\n")
 
+                cap_x_axis = np.arange(201, dtype=int)
+                sfcs_value = np.stack((cap_x_axis,cap_y_axis), axis=-1)
 
 
                 json_dict = {
-                    "sfcs_value": cap_y_axis.tolist(),  # Convert NumPy array to list
+                    "sfcs_value": sfcs_value.tolist(),  # Convert NumPy array to list
                     "action": action[act],
                 }
 
                 # Write to JSON
-                with open(file_path, "a") as f:  # Open file in append mode
+                with open(json_path, "a") as f:  # Open file in append mode
                     if f.tell() > 1:  # If not the first element, add a comma before appending
                         f.write(",\n")
                     json.dump(json_dict, f, separators=(",", ":"))
@@ -86,14 +94,14 @@ def read_serial_JSON():
         
         
         # Add closing square bracket "]" when keyboard interrupt occurs
-        with open(file_path, "a") as f:
+        with open(json_path, "a") as f:
             f.write("\n]")
 
 
     except KeyboardInterrupt:
 
         # Add closing square bracket "]" when keyboard interrupt occurs
-        with open(file_path, "a") as f:
+        with open(json_path, "a") as f:
             f.write("\n]")
 
         # Close the serial connection when the program is interrupted
