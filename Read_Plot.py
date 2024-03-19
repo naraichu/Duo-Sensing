@@ -111,7 +111,7 @@ def update(frame):
     res_array.append(res_value)
 
     # Detect peaks in res_array
-    peaks, _ = scipy.signal.find_peaks(res_array, distance=2, threshold=15)
+    peaks, _ = scipy.signal.find_peaks(res_array, distance=2, threshold=30)
 
     # Update plots
     ax1.clear()
