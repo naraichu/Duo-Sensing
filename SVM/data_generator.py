@@ -6,7 +6,7 @@ import json
 
 '''
 #NOTE
-This code is for append SFCS value into JSON format for training the SVM
+This code is for append SFCS value into JSON format for training the SVM.
 
 '''
 
@@ -25,13 +25,13 @@ ser = serial.Serial('COM12', 115200)
 isStart = False
 
 # File path that JSON is stored
-json_path = "C:/Users/acer/OneDrive - University of Bath/Subjects/Year 3/CM30082 Individual Project/Software/Duo_Tactile_Software/ML/datasets.JSON"
+json_path = "C:/Users/acer/OneDrive - University of Bath/Subjects/Year 3/CM30082 Individual Project/Software/Duo_Tactile_Software/Use_cases/Long_strip/long_strip_data.JSON"
 
 # Classified actions
 action = ["None", "One finger", "Two fingers", "Three fingers", "Palm", "Full"]
 
 # Number of datasets per actions
-step = 5
+step = 200
 
 # Total length of the JSON
 total_len = step * len(action)
@@ -77,7 +77,7 @@ def read_serial_JSON():
                         # Output resistive sensing value
                         print("SFCS   : ", cap_y_axis)
                         print("Action : ", action[act])
-                        print("Count  : ", count)
+                        print("Count  : ", count, "/", step)
                         print("\n")
 
 
@@ -158,6 +158,7 @@ def is_data_valid(all_array):
 if __name__ == "__main__":
     if not isStart:
         print(">> Get ready to generate data!!!")
+        print("First action : ", action[0])
         time.sleep(6)
         isStart = True
 

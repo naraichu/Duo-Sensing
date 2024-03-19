@@ -7,23 +7,24 @@ from sklearn.metrics import accuracy_score
 import pickle
 
 # Files path for training data and saving the model
-json_path = "C:/Users/acer/OneDrive - University of Bath/Subjects/Year 3/CM30082 Individual Project/Software/Duo_Tactile_Software/ML/datasets.JSON"
-pickle_path = "C:/Users/acer/OneDrive - University of Bath/Subjects/Year 3/CM30082 Individual Project/Software/Duo_Tactile_Software/ML/SVM/SFCS_SVM.pkl"
+json_path = "C:/Users/acer/OneDrive - University of Bath/Subjects/Year 3/CM30082 Individual Project/Software/Duo_Tactile_Software/Use_cases/Long_strip/long_strip_data.JSON"
+pickle_path = "C:/Users/acer/OneDrive - University of Bath/Subjects/Year 3/CM30082 Individual Project/Software/Duo_Tactile_Software/Use_cases/Long_strip/long_strip_SVM.pkl"
 
 freq_len = 200
+
 
 # Load JSON datasets
 with open(json_path, "rb") as f:
     dataset = json.load(f)
 
-# SFCS values in 2D array
-x = np.array([data['sfcs_value'] for data in dataset])
-x = x.reshape(-1, 2)
 
-# Action for classification
-y = np.array([[data['action'] for _ in range(freq_len + 1)] for data in dataset])
-y = y.reshape(-1)
+x = np.array([sample["sfcs_value"] for sample in dataset["data"]])
+y = np.array([sample["action"] for sample in dataset["data"]])
 
+print("x : ", x)
+print("y : ", y)
+
+'''
 # Split dataset into training and testing sets
 x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.3, random_state=42)
 
@@ -48,7 +49,7 @@ y_pred = svm_classifier.predict(x_test)
 # Accuracy
 accuracy = accuracy_score(y_test, y_pred)
 print("Accuracy:", accuracy)
-
+'''
 
 
 
