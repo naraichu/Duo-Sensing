@@ -16,13 +16,13 @@ pickle_path = "C:/Users/acer/OneDrive - University of Bath/Subjects/Year 3/CM300
 freq_len   = 200
 
 # Number of actions to be classified
-action_num = 6
+action_num = 5
 
 # Size of data for testing
-test_size = 0.6
+test_size = 0.8
 
 # Random shuffle
-np.random.seed(20)
+np.random.seed(34)
 
 
 # Load JSON datasets
@@ -37,7 +37,7 @@ x = x.reshape((freq_len*action_num),-1)
 y = np.array([sample["action"] for sample in dataset["long_strip"]])
 
 
-# Permutation for 80% / 20% validation
+# Permutation
 permutation = np.random.permutation(freq_len*action_num)
 x = x[permutation]
 y = y[permutation]

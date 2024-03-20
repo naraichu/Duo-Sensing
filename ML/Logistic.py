@@ -17,7 +17,7 @@ pickle_path = "C:/Users/acer/OneDrive - University of Bath/Subjects/Year 3/CM300
 freq_len   = 200
 
 # Number of actions to be classified
-action_num = 6
+action_num = 5
 
 # Size of data for testing
 test_size = 0.6
