@@ -4,12 +4,19 @@ import time
 import pickle
 
 
-# Load the SVM model
-pickle_path = "C:/Users/acer/OneDrive - University of Bath/Subjects/Year 3/CM30082 Individual Project/Software/Duo_Tactile_Software/Use_cases/Long_strip/long_strip_SVM.pkl"
+# Load file paths for each model
+SVM_pickle_path = "C:/Users/acer/OneDrive - University of Bath/Subjects/Year 3/CM30082 Individual Project/Software/Duo_Tactile_Software/Use_cases/Long_strip/long_strip_SVM.pkl"
+LR_pickle_path = "C:/Users/acer/OneDrive - University of Bath/Subjects/Year 3/CM30082 Individual Project/Software/Duo_Tactile_Software/Use_cases/Long_strip/long_strip_logistic.pkl"
 
-#
-with open(pickle_path, 'rb') as f:
+
+# Load pickle SVM
+with open(SVM_pickle_path, 'rb') as f:
     svm_model = pickle.load(f)
+
+
+# Load pickle Logistic regression
+with open(SVM_pickle_path, 'rb') as f:
+    lr_model = pickle.load(f)
 
 
 # Input number of frequency being swept
@@ -38,7 +45,7 @@ res_array = []
 
 
 def read_classify():
-    global cap_x_axis, cap_y_back_axis, res_back_value, svm_model
+    global cap_x_axis, cap_y_back_axis, res_back_value
     
     try:
         while True:
@@ -59,8 +66,12 @@ def read_classify():
                 SFCS_value = Array_2D(cap_x_axis,cap_y_axis)
                 
                 # Make a prediction
-                predict = svm_model.predict(SFCS_value)
-                print("Action: ", predict)
+                svm_predict = svm_model.predict(SFCS_value)
+                lr_predict = lr_model.predict(SFCS_value)
+
+                print("SVM : ", svm_predict)
+                print("LR  : ", lr_predict)
+                print("\n")
     
 
             # If not valid, return last known data

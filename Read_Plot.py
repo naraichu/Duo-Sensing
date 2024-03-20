@@ -4,6 +4,7 @@ import scipy.signal
 import time
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
+import pickle
 
 # Input number of frequency being swept
 freq_len = 200
@@ -34,6 +35,21 @@ time_steps = []
 res_array = []
 
 
+# Load file paths for each model
+SVM_pickle_path = "C:/Users/acer/OneDrive - University of Bath/Subjects/Year 3/CM30082 Individual Project/Software/Duo_Tactile_Software/Use_cases/Long_strip/long_strip_SVM.pkl"
+LR_pickle_path = "C:/Users/acer/OneDrive - University of Bath/Subjects/Year 3/CM30082 Individual Project/Software/Duo_Tactile_Software/Use_cases/Long_strip/long_strip_logistic.pkl"
+
+
+# Load pickle SVM
+with open(SVM_pickle_path, 'rb') as f:
+    svm_model = pickle.load(f)
+
+
+# Load pickle Logistic regression
+with open(SVM_pickle_path, 'rb') as f:
+    lr_model = pickle.load(f)
+
+
 
 def read_serial():
     global cap_y_back_axis, res_back_value
@@ -56,10 +72,22 @@ def read_serial():
                 cap_y_back_axis = cap_y_axis
                 res_back_value = res_value
 
+
+                # Process array into SVM format
+                SFCS_value = Array_2D(cap_x_axis,cap_y_axis)
+                
+                # Make a prediction
+                svm_predict = svm_model.predict(SFCS_value)
+                lr_predict = lr_model.predict(SFCS_value)
+                
                 # Output values
                 print("SFCS  :", cap_y_axis)
                 print("Res   : ", res_value)
+                # Output predictions
+                print("SVM : ", svm_predict)
+                print("LR  : ", lr_predict)
                 print("\n")
+
 
                 # Return reading values
                 return res_value, cap_y_axis
@@ -89,6 +117,11 @@ def separate_data(all_array):
     return res_value, cap_y_axis
 
 
+def Array_2D(x,y):
+    y = np.stack((x,y), axis=-1)  # Stack into 2D array        [x0,x1...x200] + [y0, y1...y200] --> [[x0,y0],[x1,y1]...[x200,y200]]
+    y = y.reshape(1,-1)           # Reshape to form 1D array   [[x0,y0],[x1,y1]...[x200,y200]]  --> [[x0,y0,x1,y1...x200,y200]]
+    return y
+
 
 # Check whether the value is valid
 def is_data_valid(all_array):
@@ -115,6 +148,7 @@ def update(frame):
 
     # Update plots
     ax1.clear()
+    ax1.grid(True)
     ax1.plot(cap_x_axis, cap_y_axis, 'b-', markersize=1)
     ax1.set(title='Swept Frequency Capacitive Sensing',
             xlabel='Frequency',
@@ -123,6 +157,7 @@ def update(frame):
             ylim=[0, 1100])
 
     ax2.clear()
+    ax2.grid(True)
     ax2.plot(time_steps, res_array, 'g-', markersize=1)
     ax2.plot([time_steps[i] for i in peaks], [res_array[i] for i in peaks], 'o')  # Plot peaks with 'o'
     ax2.set(title='Resistive Sensing',
