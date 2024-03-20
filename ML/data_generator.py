@@ -175,7 +175,8 @@ def is_data_valid(all_array):
 # Main function
 if __name__ == "__main__":
     if not isStart:
-        print(">> Get ready, total of", len(action), "actions")
+        print(">> Get ready...")
+        print("Total of", len(action), "actions with", step, "steps for each action")
         print("First action : ", action[0])
         time.sleep(6)
         isStart = True
