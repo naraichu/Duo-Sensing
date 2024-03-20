@@ -2,6 +2,7 @@ import serial
 import numpy as np
 import time
 import json
+import os
 
 
 '''
@@ -25,10 +26,10 @@ ser = serial.Serial('COM12', 115200)
 isStart = False
 
 # File path that JSON is stored
-json_path = "C:/Users/acer/OneDrive - University of Bath/Subjects/Year 3/CM30082 Individual Project/Software/Duo_Tactile_Software/Use_cases/Long_strip/long_strip_data.JSON"
+json_path = "C:/Users/acer/OneDrive - University of Bath/Subjects/Year 3/CM30082 Individual Project/Software/Duo_Tactile_Software/SVM/traning_data.JSON"
 
 # Classified actions
-action = ["None", "One finger", "Two fingers", "Three fingers", "Palm", "Full"]
+action = ["None", "One finger", "Two fingers", "Three fingers", "Palm", "Full"] #<---- !!! Make sure to change based on use case
 
 # Number of datasets per actions
 step = 200
@@ -37,13 +38,26 @@ step = 200
 total_len = step * len(action)
 
 
+
 def read_serial_JSON():
-    global step, total_len  
+    global step, total_len
     try:
         
-        # Add opening square bracket "[" at the start of the file
+        '''
+        # If JSON is not empty then remove "]" and replace with ","
+        if os.path.exists(json_path):
+            with open(json_path, 'r+') as r:
+                data = json.load(r)
+                if data:  # Check if JSON is not empty
+                    data.pop()  # Remove the last element
+                    json.dump(data, r)  # Write the modified JSON data
+                    r.write(",\n")  # Append comma
+                    r.close()
+        '''
+
+        # Add opening brackets with name at the start of the file
         with open(json_path, "a") as f:
-            f.write('{\n\t"data": [\n')
+            f.write('{\n\t"long_strip": [\n') #<---- !!! Make sure to change based on use case
             f.close()
             
             # Track the last value append to not add ","
@@ -76,19 +90,18 @@ def read_serial_JSON():
 
                         # Output resistive sensing value
                         print("SFCS   : ", cap_y_axis)
-                        print("Action : ", action[act])
-                        print("Count  : ", count, "/", step)
+                        print("Action      : ", act+1, "/", len(action))
+                        print("Action type : ", action[act])
+                        print("Count       : ", count, "/", step)
                         print("\n")
-
-
-                        '''
+                        
                         # For adding 2D both x and y
                         cap_x_axis = np.arange(201, dtype=int)
                         sfcs_value = np.stack((cap_x_axis,cap_y_axis), axis=-1)
-                        '''
+                        
 
                         json_dict = {
-                            "sfcs_value": cap_y_axis.tolist(),  # Convert NumPy array to list
+                            "sfcs_value": sfcs_value.tolist(),  # Convert NumPy array to list
                             "action": action[act],
                         }
 
@@ -97,10 +110,12 @@ def read_serial_JSON():
                             f.write("\t\t")
                             json.dump(json_dict, f, separators=(",", ":"))
 
+                            # If last element, do not add ","
                             if (track == total_len):
                                 f.write("\n")
                                 f.close()
                             
+                            # Else add ","
                             else:
                                 f.write(",\n")
                                 f.close()
@@ -112,27 +127,30 @@ def read_serial_JSON():
                         ser.close()
                         ser.open()
             
-                # Delay 5 seconds
+                # Show next action to be stored in JSON and give time delay
                 if act < len(action)-1:
                     act += 1
-                    print("Wait for 5 seconds...")
+                    print("Get ready for next action...")
                     print("Next action : ", action[act])
                     time.sleep(5)
                 
+                # In case of reaching limit then break loop
                 else:
                     break
         
-        # Add closing square bracket "]" when keyboard interrupt occurs
+        # Add closing brackets when keyboard interrupt occurs
         with open(json_path, "a") as f:
             f.write("\t]\n}")
             f.close()
 
 
     except KeyboardInterrupt:
-        # Add closing square bracket "]" when keyboard interrupt occurs
+        # Add closing brackets when keyboard interrupt occurs
         with open(json_path, "a") as f:
             f.write("\t]\n}")
             f.close()
+            # Make sure to remove "," on the last element manually at JSON file
+
 
         # Close the serial connection when the program is interrupted
         print("<-- Port closed -->")
@@ -157,7 +175,7 @@ def is_data_valid(all_array):
 # Main function
 if __name__ == "__main__":
     if not isStart:
-        print(">> Get ready to generate data!!!")
+        print(">> Get ready, total of", len(action), "actions")
         print("First action : ", action[0])
         time.sleep(6)
         isStart = True

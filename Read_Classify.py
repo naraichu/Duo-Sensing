@@ -5,7 +5,7 @@ import pickle
 
 
 # Load the SVM model
-pickle_path = "C:/Users/acer/OneDrive - University of Bath/Subjects/Year 3/CM30082 Individual Project/Software/Duo_Tactile_Software/ML/SVM/SFCS_SVM.pkl"
+pickle_path = "C:/Users/acer/OneDrive - University of Bath/Subjects/Year 3/CM30082 Individual Project/Software/Duo_Tactile_Software/Use_cases/Long_strip/long_strip_SVM.pkl"
 
 #
 with open(pickle_path, 'rb') as f:
@@ -55,20 +55,20 @@ def read_classify():
                 # Separate data out into each category
                 res_value, cap_y_axis = separate_data(all_array)
 
-                # Merge cap_x with cap_y for SVM
+                # Process array into SVM format
                 SFCS_value = Array_2D(cap_x_axis,cap_y_axis)
-
-                #
-                predict = svm_model.predict(SFCS_value)
-
-                print("Action: ", predict)
-
                 
+                # Make a prediction
+                predict = svm_model.predict(SFCS_value)
+                print("Action: ", predict)
+    
+
             # If not valid, return last known data
             else:
                 # Restart the serial connection
                 ser.close()
                 ser.open()
+
 
     except KeyboardInterrupt:
         # Close the serial connection when the program is interrupted
@@ -90,7 +90,8 @@ def is_data_valid(all_array):
 
 
 def Array_2D(x,y):
-    y = np.vstack((x,y)).T
+    y = np.stack((x,y), axis=-1)  # Stack into 2D array        [x0,x1...x200] + [y0, y1...y200] --> [[x0,y0],[x1,y1]...[x200,y200]]
+    y = y.reshape(1,-1)           # Reshape to form 1D array   [[x0,y0],[x1,y1]...[x200,y200]]  --> [[x0,y0,x1,y1...x200,y200]]
     return y
 
 
