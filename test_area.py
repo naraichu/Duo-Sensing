@@ -25,7 +25,7 @@ ser = serial.Serial('COM12', 115200)
 isStart = False
 
 # Classified actions
-action = ["None", "One finger", "Two fingers", "Three fingers", "Palm", "Full"] #<---- !!! Make sure to change based on use case
+action = ["None", "One finger", "Two fingers", "Three fingers", "Full"] #<---- !!! Make sure to change based on use case
 
 # Number of datasets per actions
 step = 5

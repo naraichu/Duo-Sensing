@@ -7,6 +7,7 @@ import pickle
 # Load file paths for each model
 SVM_pickle_path = "C:/Users/acer/OneDrive - University of Bath/Subjects/Year 3/CM30082 Individual Project/Software/Duo_Tactile_Software/Use_cases/Long_strip/long_strip_SVM.pkl"
 LR_pickle_path = "C:/Users/acer/OneDrive - University of Bath/Subjects/Year 3/CM30082 Individual Project/Software/Duo_Tactile_Software/Use_cases/Long_strip/long_strip_logistic.pkl"
+NB_pickle_path = "C:/Users/acer/OneDrive - University of Bath/Subjects/Year 3/CM30082 Individual Project/Software/Duo_Tactile_Software/Use_cases/Long_strip/long_strip_naive.pkl"
 
 
 # Load pickle SVM
@@ -15,8 +16,13 @@ with open(SVM_pickle_path, 'rb') as f:
 
 
 # Load pickle Logistic regression
-with open(SVM_pickle_path, 'rb') as f:
+with open(LR_pickle_path, 'rb') as f:
     lr_model = pickle.load(f)
+
+
+# Load pickle Naive Bayes
+with open(NB_pickle_path, 'rb') as f:
+    nb_model = pickle.load(f)
 
 
 # Input number of frequency being swept
@@ -68,9 +74,11 @@ def read_classify():
                 # Make a prediction
                 svm_predict = svm_model.predict(SFCS_value)
                 lr_predict = lr_model.predict(SFCS_value)
+                nb_predict = nb_model.predict(SFCS_value)
 
                 print("SVM : ", svm_predict)
                 print("LR  : ", lr_predict)
+                print("NB  : ", nb_predict)
                 print("\n")
     
 
@@ -104,6 +112,7 @@ def Array_2D(x,y):
     y = np.stack((x,y), axis=-1)  # Stack into 2D array        [x0,x1...x200] + [y0, y1...y200] --> [[x0,y0],[x1,y1]...[x200,y200]]
     y = y.reshape(1,-1)           # Reshape to form 1D array   [[x0,y0],[x1,y1]...[x200,y200]]  --> [[x0,y0,x1,y1...x200,y200]]
     return y
+
 
 
 # Main function

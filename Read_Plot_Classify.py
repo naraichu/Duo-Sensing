@@ -38,6 +38,8 @@ res_array = []
 # Load file paths for each model
 SVM_pickle_path = "C:/Users/acer/OneDrive - University of Bath/Subjects/Year 3/CM30082 Individual Project/Software/Duo_Tactile_Software/Use_cases/Long_strip/long_strip_SVM.pkl"
 LR_pickle_path = "C:/Users/acer/OneDrive - University of Bath/Subjects/Year 3/CM30082 Individual Project/Software/Duo_Tactile_Software/Use_cases/Long_strip/long_strip_logistic.pkl"
+NB_pickle_path = "C:/Users/acer/OneDrive - University of Bath/Subjects/Year 3/CM30082 Individual Project/Software/Duo_Tactile_Software/Use_cases/Long_strip/long_strip_naive.pkl"
+NN_pickle_path = "C:/Users/acer/OneDrive - University of Bath/Subjects/Year 3/CM30082 Individual Project/Software/Duo_Tactile_Software/Use_cases/Long_strip/long_strip_NN.pkl"
 
 
 # Load pickle SVM
@@ -46,8 +48,18 @@ with open(SVM_pickle_path, 'rb') as f:
 
 
 # Load pickle Logistic regression
-with open(SVM_pickle_path, 'rb') as f:
+with open(LR_pickle_path, 'rb') as f:
     lr_model = pickle.load(f)
+
+
+# Load pickle Naive Bayes
+with open(NB_pickle_path, 'rb') as f:
+    nb_model = pickle.load(f)
+
+
+# Load pickle neural network
+with open(NN_pickle_path, 'rb') as f:
+    nn_model = pickle.load(f)
 
 
 
@@ -84,8 +96,15 @@ def read_serial():
                 print("SFCS  :", cap_y_axis)
                 print("Res   : ", res_value)
                 # Output predictions
+                svm_predict = svm_model.predict(SFCS_value)
+                lr_predict = lr_model.predict(SFCS_value)
+                nb_predict = nb_model.predict(SFCS_value)
+                nn_predict = nn_model.predict(SFCS_value)
+                
                 print("SVM : ", svm_predict)
                 print("LR  : ", lr_predict)
+                print("NB  : ", nb_predict)
+                print("NN  : ", nn_predict)
                 print("\n")
 
 
