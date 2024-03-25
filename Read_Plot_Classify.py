@@ -43,6 +43,7 @@ NN_pickle_path  = "C:/Users/acer/OneDrive - University of Bath/Subjects/Year 3/C
 RF_pickle_path  = "C:/Users/acer/OneDrive - University of Bath/Subjects/Year 3/CM30082 Individual Project/Software/Duo_Tactile_Software/Use_cases/SFCS_Pad/RF_SFCS_Pad.pkl"
 
 
+'''
 # Load pickle SVM
 with open(SVM_pickle_path, 'rb') as f:
     svm_model = pickle.load(f)
@@ -63,10 +64,10 @@ with open(NN_pickle_path, 'rb') as f:
     nn_model = pickle.load(f)
 
 
-# Load pickle neural network
+# Load pickle random forest
 with open(RF_pickle_path, 'rb') as f:
     rf_model = pickle.load(f)
-
+'''
 
 
 def read_serial():
@@ -94,13 +95,11 @@ def read_serial():
                 # Process array into SVM format
                 SFCS_value = Array_2D(cap_x_axis,cap_y_axis)
                 
-                # Make a prediction
-                svm_predict = svm_model.predict(SFCS_value)
-                lr_predict = lr_model.predict(SFCS_value)
                 
                 # Output values
                 print("SFCS  :", cap_y_axis)
                 print("Res   : ", res_value)
+                '''
                 # Output predictions
                 svm_predict = svm_model.predict(SFCS_value)
                 lr_predict = lr_model.predict(SFCS_value)
@@ -114,7 +113,7 @@ def read_serial():
                 print("NN  : ", nn_predict)
                 print("RF  : ", rf_predict)
                 print("\n")
-
+                '''
 
                 # Return reading values
                 return res_value, cap_y_axis
