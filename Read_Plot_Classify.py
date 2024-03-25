@@ -36,10 +36,11 @@ res_array = []
 
 
 # Load file paths for each model
-SVM_pickle_path = "C:/Users/acer/OneDrive - University of Bath/Subjects/Year 3/CM30082 Individual Project/Software/Duo_Tactile_Software/Use_cases/Long_strip/long_strip_SVM.pkl"
-LR_pickle_path = "C:/Users/acer/OneDrive - University of Bath/Subjects/Year 3/CM30082 Individual Project/Software/Duo_Tactile_Software/Use_cases/Long_strip/long_strip_logistic.pkl"
-NB_pickle_path = "C:/Users/acer/OneDrive - University of Bath/Subjects/Year 3/CM30082 Individual Project/Software/Duo_Tactile_Software/Use_cases/Long_strip/long_strip_naive.pkl"
-NN_pickle_path = "C:/Users/acer/OneDrive - University of Bath/Subjects/Year 3/CM30082 Individual Project/Software/Duo_Tactile_Software/Use_cases/Long_strip/long_strip_NN.pkl"
+SVM_pickle_path = "C:/Users/acer/OneDrive - University of Bath/Subjects/Year 3/CM30082 Individual Project/Software/Duo_Tactile_Software/Use_cases/SFCS_Pad/SVM_SFCS_Pad.pkl"
+LR_pickle_path  = "C:/Users/acer/OneDrive - University of Bath/Subjects/Year 3/CM30082 Individual Project/Software/Duo_Tactile_Software/Use_cases/SFCS_Pad/LR_SFCS_Pad.pkl"
+NB_pickle_path  = "C:/Users/acer/OneDrive - University of Bath/Subjects/Year 3/CM30082 Individual Project/Software/Duo_Tactile_Software/Use_cases/SFCS_Pad/NB_SFCS_Pad.pkl"
+NN_pickle_path  = "C:/Users/acer/OneDrive - University of Bath/Subjects/Year 3/CM30082 Individual Project/Software/Duo_Tactile_Software/Use_cases/SFCS_Pad/NN_SFCS_Pad.pkl"
+RF_pickle_path  = "C:/Users/acer/OneDrive - University of Bath/Subjects/Year 3/CM30082 Individual Project/Software/Duo_Tactile_Software/Use_cases/SFCS_Pad/RF_SFCS_Pad.pkl"
 
 
 # Load pickle SVM
@@ -60,6 +61,11 @@ with open(NB_pickle_path, 'rb') as f:
 # Load pickle neural network
 with open(NN_pickle_path, 'rb') as f:
     nn_model = pickle.load(f)
+
+
+# Load pickle neural network
+with open(RF_pickle_path, 'rb') as f:
+    rf_model = pickle.load(f)
 
 
 
@@ -100,11 +106,13 @@ def read_serial():
                 lr_predict = lr_model.predict(SFCS_value)
                 nb_predict = nb_model.predict(SFCS_value)
                 nn_predict = nn_model.predict(SFCS_value)
+                rf_predict = rf_model.predict(SFCS_value)
                 
                 print("SVM : ", svm_predict)
                 print("LR  : ", lr_predict)
                 print("NB  : ", nb_predict)
                 print("NN  : ", nn_predict)
+                print("RF  : ", rf_predict)
                 print("\n")
 
 

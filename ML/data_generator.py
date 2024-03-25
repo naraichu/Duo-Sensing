@@ -25,10 +25,10 @@ ser = serial.Serial('COM12', 115200)
 isStart = False
 
 # File path that JSON is stored
-json_path = "C:/Users/acer/OneDrive - University of Bath/Subjects/Year 3/CM30082 Individual Project/Software/Duo_Tactile_Software/ML/traning_data.JSON"
+json_path = "C:/Users/acer/OneDrive - University of Bath/Subjects/Year 3/CM30082 Individual Project/Software/Duo_Tactile_Software/Use_cases/SFCS_Pad/dataset_SFCS_Pad.JSON"
 
 # Classified actions
-action = ["None", "One finger", "Two fingers", "Three fingers", "Full"] #<---- !!! Make sure to change based on use case
+action = ["None", "One finger", "Two fingers", "Three fingers", "Four fingers", "Arm", "Full"] #<---- !!! Make sure to change based on use case
 
 # Number of datasets per actions
 step = 200
@@ -44,7 +44,7 @@ def read_serial_JSON():
 
         # Add opening brackets with name at the start of the file
         with open(json_path, "a") as f:
-            f.write('{\n\t"long_strip": [\n') #<---- !!! Make sure to change based on use case
+            f.write('{\n\t"SFCS_pad": [\n') #<---- !!! Make sure to change based on use case
             f.close()
             
             # Track the last value append to not add ","
