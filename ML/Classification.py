@@ -31,7 +31,7 @@ RF_pickle_path  = "C:/Users/acer/OneDrive - University of Bath/Subjects/Year 3/C
 freq_len   = 200
 
 # Number of actions to be classified
-action_num = 6
+action_num = 5
 
 # Number of step for data in each action
 step = 200
