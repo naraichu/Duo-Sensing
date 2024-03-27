@@ -14,8 +14,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn import naive_bayes
 from sklearn.neural_network import MLPClassifier
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.gaussian_process import GaussianProcessClassifier
-from sklearn.gaussian_process.kernels import RBF
+
 
 
 # Files path for training data and saving the models
@@ -32,25 +31,33 @@ RF_pickle_path  = "C:/Users/acer/OneDrive - University of Bath/Subjects/Year 3/C
 freq_len   = 200
 
 # Number of actions to be classified
-action_num = 7
+action_num = 6
+
+# Number of step for data in each action
+step = 200
 
 # Spliting parameters
 size   = 0.2
-random = 0
+random = 42
 
 # Load JSON datasets
 with open(json_path, "rb") as j:
     dataset = json.load(j)
 
+
 # Seperate data into x and y
 x = np.array([sample["sfcs_value"] for sample in dataset["SFCS_pad"]])
-x = x.reshape((freq_len*action_num),-1)
+x = x.reshape(freq_len * action_num,-1)     # [[[x0,y0],[x1,y1]...[x200,y200]]...[[x0,y0],[x1,y1]...[x200,y200]]]  --> [[x0,y0,x1,y1...x200,y200]...[x0,y0,x1,y1...x200,y200]]
+print(x)
 
 y = np.array([sample["action"] for sample in dataset["SFCS_pad"]])
+print(y)
+print("\n")
 
 
 # Splitting the data
 x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=size, random_state=random)
+
 
 # Scaling x datasets
 scaler = StandardScaler()
@@ -58,17 +65,17 @@ x_train_scale = scaler.fit_transform(x_train)
 x_test_scale  = scaler.transform(x_test)
 
 
-
 # Save model using Pickle
 def SaveModel(path, model):
     with open(path, 'wb') as f:
         pickle.dump(model, f)
         f.close()
+    print(">> Model saved")
 
 
 # Support Vector Machine
 def SVM():
-    svm_classifier = SVC(C=0.2, kernel='rbf', degree=3, gamma='scale')
+    svm_classifier = SVC(C=0.05, kernel='rbf', degree=3, gamma='scale', coef0=0.0, shrinking=True, probability=False, tol=0.001, cache_size=200, class_weight=None, verbose=False, max_iter=-1, decision_function_shape='ovr', break_ties=False, random_state=None)
     svm_classifier.fit(x_train_scale, y_train)
 
     SaveModel(SVM_pickle_path, svm_classifier)
@@ -77,12 +84,13 @@ def SVM():
     accuracy = accuracy_score(y_test, y_pred)
     
     print("SVM : ", accuracy)
+    print("\n")
     return accuracy
 
 
 # Logistic Regression
 def LR():
-    lr_classifier = LogisticRegression(max_iter=1000)
+    lr_classifier = LogisticRegression(penalty='l2', max_iter=1000)
     lr_classifier.fit(x_train_scale, y_train)
     
     SaveModel(LR_pickle_path, lr_classifier)
@@ -91,26 +99,28 @@ def LR():
     accuracy = accuracy_score(y_test, y_lr_pred)
     
     print("LR  : ", accuracy)
+    print("\n")
     return accuracy
 
 
 # Naïve Bayes
 def NB():
     nb_classifier = naive_bayes.GaussianNB()
-    nb_classifier.fit(x_train_scale, y_train)
+    nb_classifier.fit(x_train, y_train)
 
     SaveModel(NB_pickle_path, nb_classifier)
 
-    y_pred = nb_classifier.predict(x_test_scale)
+    y_pred = nb_classifier.predict(x_test)
     accuracy = accuracy_score(y_test, y_pred)
 
     print("NB  : ", accuracy)
+    print("\n")
     return accuracy
 
 
 # Multilayer perceptron (Neural Network)
 def NN():
-    nn_classifier = MLPClassifier(solver='adam', alpha=1e-5, hidden_layer_sizes=(80,60), max_iter=1000)
+    nn_classifier = MLPClassifier(solver='adam', alpha=1e-5, hidden_layer_sizes=(200,10), max_iter=1000)
     nn_classifier.fit(x_train_scale, y_train)
 
     SaveModel(NN_pickle_path, nn_classifier)
@@ -119,12 +129,13 @@ def NN():
     accuracy = accuracy_score(y_test, y_pred)
 
     print("NN  : ", accuracy)
+    print("\n")
     return accuracy
 
 
 # Random Forest
 def RF():
-    rf_classifier = RandomForestClassifier()
+    rf_classifier = RandomForestClassifier(n_estimators=20)
     rf_classifier.fit(x_train_scale, y_train)
 
     SaveModel(RF_pickle_path, rf_classifier)
@@ -133,6 +144,7 @@ def RF():
     accuracy = accuracy_score(y_test, y_pred)
 
     print("RF  : ", accuracy)
+    print("\n")
     return accuracy
 
 
@@ -160,7 +172,9 @@ if __name__ == '__main__':
     ax.set_ylabel('Accuracy')
     ax.set_title('Classification Algorithms Accuracy')
     ax.legend(title='Accuracy')
-    ax.set_ylim(0.65, 1.00)  # Set y-axis limits from 0 to 1
+    ax.set_ylim(0.30, 1.00)  # Set y-axis limits from 0 to 1
 
     # Show graph
     plt.show()
+
+    

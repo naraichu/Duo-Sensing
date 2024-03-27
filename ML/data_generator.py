@@ -8,6 +8,12 @@ import json
 #NOTE
 This code is for append SFCS value into JSON format for training the SVM.
 
+
+
+#TO DO
+1) Rewrite JSON with two actions None and two fingers
+2) Troubleshoot the problem, is it from the model or in the file that send data for classification
+
 '''
 
 
@@ -28,7 +34,7 @@ isStart = False
 json_path = "C:/Users/acer/OneDrive - University of Bath/Subjects/Year 3/CM30082 Individual Project/Software/Duo_Tactile_Software/Use_cases/SFCS_Pad/dataset_SFCS_Pad.JSON"
 
 # Classified actions
-action = ["None", "One finger", "Two fingers", "Three fingers", "Four fingers", "Arm", "Full"] #<---- !!! Make sure to change based on use case
+action = ["None", "One finger", "Two fingers", "Three fingers", "Palm", "Full"] #<---- !!! Make sure to change based on use case
 
 # Number of datasets per actions
 step = 200
@@ -117,6 +123,7 @@ def read_serial_JSON():
                 # Show next action to be stored in JSON and give time delay
                 if act < len(action)-1:
                     act += 1
+                    print("_________________________________________")
                     print("Get ready for next action...")
                     print("Next action : ", action[act])
                     time.sleep(5)

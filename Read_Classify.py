@@ -85,12 +85,15 @@ def read_classify():
                 SFCS_value = Array_2D(cap_x_axis,cap_y_axis)
                 
                 # Output predictions
-                svm_predict = svm_model.predict(SFCS_value)
-                lr_predict = lr_model.predict(SFCS_value)
-                nb_predict = nb_model.predict(SFCS_value)
-                nn_predict = nn_model.predict(SFCS_value)
-                rf_predict = rf_model.predict(SFCS_value)
                 
+                svm_predict = svm_model.predict(SFCS_value)
+                lr_predict  = lr_model.predict(SFCS_value)
+                nb_predict  = nb_model.predict(SFCS_value)
+                nn_predict  = nn_model.predict(SFCS_value)
+                rf_predict  = rf_model.predict(SFCS_value)
+
+                # Output results
+                print("Value : ", SFCS_value)
                 print("SVM : ", svm_predict)
                 print("LR  : ", lr_predict)
                 print("NB  : ", nb_predict)
