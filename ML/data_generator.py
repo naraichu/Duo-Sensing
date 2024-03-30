@@ -34,7 +34,7 @@ isStart = False
 json_path = "C:/Users/acer/OneDrive - University of Bath/Subjects/Year 3/CM30082 Individual Project/Software/Duo_Tactile_Software/Use_cases/SFCS_Pad/dataset_SFCS_Pad.JSON"
 
 # Classified actions
-action = ["None", "One finger", "Two fingers", "Three fingers", "Palm"] #<---- !!! Make sure to change based on use case
+action = ["None", "Fingers", "Fist", "Palm", "Side"] #<---- !!! Make sure to change based on use case
 
 # Number of datasets per actions
 step = 200

@@ -37,7 +37,7 @@ action_num = 5
 step = 200
 
 # Spliting parameters
-size   = 0.2
+size   = 0.3
 random = 42
 
 # Load JSON datasets
@@ -47,7 +47,7 @@ with open(json_path, "rb") as j:
 
 # Seperate data into x and y
 x = np.array([sample["sfcs_value"] for sample in dataset["SFCS_pad"]])
-x = x.reshape(freq_len * action_num,-1)     # [[[x0,y0],[x1,y1]...[x200,y200]]...[[x0,y0],[x1,y1]...[x200,y200]]]  --> [[x0,y0,x1,y1...x200,y200]...[x0,y0,x1,y1...x200,y200]]
+x = x.reshape(step * action_num,-1)     # [[[x0,y0],[x1,y1]...[x200,y200]]...[[x0,y0],[x1,y1]...[x200,y200]]]  --> [[x0,y0,x1,y1...x200,y200]...[x0,y0,x1,y1...x200,y200]]
 print(x)
 
 y = np.array([sample["action"] for sample in dataset["SFCS_pad"]])
@@ -75,7 +75,7 @@ def SaveModel(path, model):
 
 # Support Vector Machine
 def SVM():
-    svm_classifier = SVC(C=0.05, kernel='rbf', degree=3, gamma='scale', coef0=0.0, shrinking=True, probability=False, tol=0.001, cache_size=200, class_weight=None, verbose=False, max_iter=-1, decision_function_shape='ovr', break_ties=False, random_state=None)
+    svm_classifier = SVC(C=0.03, kernel='poly', degree=3, gamma='scale', coef0=0.01, shrinking=True, probability=False, tol=0.001, cache_size=200, class_weight=None, verbose=False, max_iter=-1, decision_function_shape='ovr', break_ties=False, random_state=None)
     svm_classifier.fit(x_train_scale, y_train)
 
     SaveModel(SVM_pickle_path, svm_classifier)
@@ -120,7 +120,7 @@ def NB():
 
 # Multilayer perceptron (Neural Network)
 def NN():
-    nn_classifier = MLPClassifier(solver='adam', alpha=1e-5, hidden_layer_sizes=(200,10), max_iter=1000)
+    nn_classifier = MLPClassifier(solver='adam', alpha=0.05, hidden_layer_sizes=(200,50), max_iter=1000)
     nn_classifier.fit(x_train_scale, y_train)
 
     SaveModel(NN_pickle_path, nn_classifier)
@@ -135,7 +135,7 @@ def NN():
 
 # Random Forest
 def RF():
-    rf_classifier = RandomForestClassifier(n_estimators=20)
+    rf_classifier = RandomForestClassifier(n_estimators=500)
     rf_classifier.fit(x_train_scale, y_train)
 
     SaveModel(RF_pickle_path, rf_classifier)
@@ -170,9 +170,9 @@ if __name__ == '__main__':
     ax.bar(classifiers, accuracies, label= accuracies, color = colours)
     ax.set_xlabel('Classifiers')
     ax.set_ylabel('Accuracy')
-    ax.set_title('Classification Algorithms Accuracy')
+    ax.set_title('Training Classification Algorithms Accuracy')
     ax.legend(title='Accuracy')
-    ax.set_ylim(0.30, 1.00)  # Set y-axis limits from 0 to 1
+    ax.set_ylim(0.50, 1.00)  # Set y-axis limits from 0 to 1
 
     # Show graph
     plt.show()
