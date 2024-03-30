@@ -59,12 +59,12 @@ def read_serial_JSON():
             # Track actions being append for classification
             act = 0
 
-            while act < len(action):
+
+            while act < len(action):               
                 # Count number of datasets being stored
                 count = 0
 
                 while count < step:
-
                     # Read data from the serial port
                     data = ser.read(byte_len)
 
@@ -82,7 +82,7 @@ def read_serial_JSON():
                         track += 1
 
                         # Output resistive sensing value
-                        print("SFCS   : ", cap_y_axis)
+                        print("SFCS: \n      ", cap_y_axis)
                         print("Action      : ", act+1, "/", len(action))
                         print("Action type : ", action[act])
                         print("Count       : ", count, "/", step)
@@ -92,7 +92,6 @@ def read_serial_JSON():
                         cap_x_axis = np.arange(201, dtype=int)
                         sfcs_value = np.stack((cap_x_axis,cap_y_axis), axis=-1)
                         
-
                         json_dict = {
                             "sfcs_value": sfcs_value.tolist(),  # Convert NumPy array to list
                             "action": action[act],
@@ -107,6 +106,7 @@ def read_serial_JSON():
                             if (track == total_len):
                                 f.write("\n")
                                 f.close()
+            
                             
                             # Else add ","
                             else:
@@ -119,6 +119,11 @@ def read_serial_JSON():
                         # Restart the serial connection
                         ser.close()
                         ser.open()
+
+                # Give time for serial to re establish connection
+                ser.close()
+                time.sleep(5)
+                ser.open()
             
                 # Show next action to be stored in JSON and give time delay
                 if act < len(action)-1:
@@ -126,11 +131,14 @@ def read_serial_JSON():
                     print("_________________________________________")
                     print("Get ready for next action...")
                     print("Next action : ", action[act])
-                    time.sleep(5)
+                    time.sleep(2)
+                    
+                
                 
                 # In case of reaching limit then break loop
                 else:
                     break
+                
         
         # Add closing brackets when keyboard interrupt occurs
         with open(json_path, "a") as f:

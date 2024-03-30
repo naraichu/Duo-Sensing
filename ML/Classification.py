@@ -95,8 +95,8 @@ def LR():
     
     SaveModel(LR_pickle_path, lr_classifier)
 
-    y_lr_pred = lr_classifier.predict(x_test_scale)
-    accuracy = accuracy_score(y_test, y_lr_pred)
+    y_pred = lr_classifier.predict(x_test_scale)
+    accuracy = accuracy_score(y_test, y_pred)
     
     print("LR  : ", accuracy)
     print("\n")
@@ -120,7 +120,7 @@ def NB():
 
 # Multilayer perceptron (Neural Network)
 def NN():
-    nn_classifier = MLPClassifier(solver='adam', alpha=0.05, hidden_layer_sizes=(200,50), max_iter=1000)
+    nn_classifier = MLPClassifier(solver='adam', alpha=0.05, hidden_layer_sizes=(200,100), max_iter=1000)
     nn_classifier.fit(x_train_scale, y_train)
 
     SaveModel(NN_pickle_path, nn_classifier)
@@ -135,7 +135,7 @@ def NN():
 
 # Random Forest
 def RF():
-    rf_classifier = RandomForestClassifier(n_estimators=500)
+    rf_classifier = RandomForestClassifier(criterion= "log_loss", n_estimators=100, bootstrap=True, max_features='log2')
     rf_classifier.fit(x_train_scale, y_train)
 
     SaveModel(RF_pickle_path, rf_classifier)
@@ -173,6 +173,7 @@ if __name__ == '__main__':
     ax.set_title('Training Classification Algorithms Accuracy')
     ax.legend(title='Accuracy')
     ax.set_ylim(0.50, 1.00)  # Set y-axis limits from 0 to 1
+    
 
     # Show graph
     plt.show()

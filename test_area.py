@@ -23,7 +23,7 @@ ser = serial.Serial('COM12', 115200)
 isStart = False
 
 # Classified actions
-action = ["None", "One finger", "Two fingers", "Three fingers", "Full"] #<---- !!! Make sure to change based on use case
+action = ["None", "Fingers", "Fist", "Palm", "Side"] #<---- !!! Make sure to change based on use case
 
 # Number of datasets per actions
 step = 5
@@ -66,7 +66,7 @@ def read_serial_JSON():
                         track += 1
 
                         # Output resistive sensing value
-                        print("SFCS   : ", cap_y_axis.tolist())
+                        print("SFCS:       \n", cap_y_axis.tolist())
                         print("Action type : ", action[act])
                         print("\n")
 
@@ -76,13 +76,18 @@ def read_serial_JSON():
                         # Restart the serial connection
                         ser.close()
                         ser.open()
+
+                # Give time for serial to re establish connection
+                ser.close()
+                time.sleep(5)
+                ser.open()
             
                 # Show next action to be stored in JSON and give time delay
                 if act < len(action)-1:
                     act += 1
                     print("Get ready for next action...")
                     print("Next action : ", action[act])
-                    time.sleep(5)
+                    time.sleep(2)
                 
                 # In case of reaching limit then break loop
                 else:
