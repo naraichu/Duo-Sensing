@@ -171,7 +171,7 @@ if __name__ == '__main__':
     rf_acc , rf_con  = RF()
     
     # Initilisation
-    fig, ((ax0, ax1), (ax2, ax3), (ax4, _)) = plt.subplots(3, 2)
+    fig, ax = plt.subplots(nrows=1, ncols=5, figsize=(9, 6))
 
     '''
     # Declare bar graphs
@@ -190,13 +190,25 @@ if __name__ == '__main__':
     # Show graph
     plt.show()
     '''
+    fig.suptitle('Confusion matrix')
 
-    ax0.imshow(svm_con, interpolation='none')
-    ax1.imshow(lr_con , interpolation='none')
-    ax2.imshow(nb_con , interpolation='none')
-    ax3.imshow(nn_con , interpolation='none')
-    ax4.imshow(rf_con , interpolation='none')
+    ax[0].set_title('SVM')
+    ax[0].imshow(svm_con, interpolation='none', cmap='viridis')
+
+    ax[1].set_title('LR')
+    ax[1].imshow(lr_con , interpolation='none', cmap='viridis')
+
+    ax[2].set_title('NB')
+    ax[2].imshow(nb_con , interpolation='none', cmap='viridis')
+
+    ax[3].set_title('NN')
+    ax[3].imshow(nn_con , interpolation='none', cmap='viridis')
+
+    ax[4].set_title('RF')
+    ax[4].imshow(rf_con , interpolation='none', cmap='viridis')
     
+    #plt.tight_layout()
+
     plt.show()
 
     
