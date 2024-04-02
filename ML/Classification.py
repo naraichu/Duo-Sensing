@@ -3,6 +3,7 @@ import json
 import numpy as np
 import pickle
 from sklearn.metrics import accuracy_score
+from sklearn.metrics import confusion_matrix
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 import matplotlib.pyplot as plt 
@@ -82,10 +83,12 @@ def SVM():
 
     y_pred = svm_classifier.predict(x_test_scale)
     accuracy = accuracy_score(y_test, y_pred)
+    confuse  = confusion_matrix(y_test, y_pred)
     
-    print("SVM : ", accuracy)
+    print("SVM ACC : ", accuracy)
+    print("SVM CON : \n", confuse)
     print("\n")
-    return accuracy
+    return accuracy, confuse
 
 
 # Logistic Regression
@@ -97,10 +100,12 @@ def LR():
 
     y_pred = lr_classifier.predict(x_test_scale)
     accuracy = accuracy_score(y_test, y_pred)
+    confuse  = confusion_matrix(y_test, y_pred)
     
-    print("LR  : ", accuracy)
+    print("LR  ACC : ", accuracy)
+    print("LR  CON : \n", confuse)
     print("\n")
-    return accuracy
+    return accuracy, confuse
 
 
 # Naïve Bayes
@@ -112,10 +117,12 @@ def NB():
 
     y_pred = nb_classifier.predict(x_test)
     accuracy = accuracy_score(y_test, y_pred)
+    confuse  = confusion_matrix(y_test, y_pred)
 
-    print("NB  : ", accuracy)
+    print("NB  ACC : ", accuracy)
+    print("NB  CON : \n", confuse)
     print("\n")
-    return accuracy
+    return accuracy, confuse
 
 
 # Multilayer perceptron (Neural Network)
@@ -127,10 +134,12 @@ def NN():
 
     y_pred = nn_classifier.predict(x_test_scale)
     accuracy = accuracy_score(y_test, y_pred)
+    confuse  = confusion_matrix(y_test, y_pred)
 
-    print("NN  : ", accuracy)
+    print("NN  ACC : ", accuracy)
+    print("NN  CON : \n", confuse)
     print("\n")
-    return accuracy
+    return accuracy, confuse
 
 
 # Random Forest
@@ -142,25 +151,29 @@ def RF():
 
     y_pred = rf_classifier.predict(x_test_scale)
     accuracy = accuracy_score(y_test, y_pred)
+    confuse  = confusion_matrix(y_test, y_pred)
 
-    print("RF  : ", accuracy)
+    print("RF  ACC : ", accuracy)
+    print("RF  CON : \n", confuse)
     print("\n")
-    return accuracy
+    return accuracy, confuse
 
 
 # Main functions
 if __name__ == '__main__':
     
+    ''''''
     # Train, save and test models
-    svm_acc = round(SVM(), 2)
-    lr_acc  = round(LR() , 2)
-    nb_acc  = round(NB() , 2)
-    nn_acc  = round(NN() , 2)
-    rf_acc  = round(RF() , 2)
-
-    # Initilised bar chart
-    fig, ax = plt.subplots()
+    svm_acc, svm_con = SVM()
+    lr_acc , lr_con  = LR()
+    nb_acc , nb_con  = NB()
+    nn_acc , nn_con  = NN()
+    rf_acc , rf_con  = RF()
     
+    # Initilisation
+    fig, ((ax0, ax1), (ax2, ax3), (ax4, _)) = plt.subplots(3, 2)
+
+    '''
     # Declare bar graphs
     classifiers = ['SVM', 'LR', 'NB', 'NN', 'RF']
     accuracies = [svm_acc, lr_acc, nb_acc, nn_acc, rf_acc]
@@ -173,9 +186,17 @@ if __name__ == '__main__':
     ax.set_title('Training Classification Algorithms Accuracy')
     ax.legend(title='Accuracy')
     ax.set_ylim(0.50, 1.00)  # Set y-axis limits from 0 to 1
-    
 
     # Show graph
+    plt.show()
+    '''
+
+    ax0.imshow(svm_con, interpolation='none')
+    ax1.imshow(lr_con , interpolation='none')
+    ax2.imshow(nb_con , interpolation='none')
+    ax3.imshow(nn_con , interpolation='none')
+    ax4.imshow(rf_con , interpolation='none')
+    
     plt.show()
 
     
