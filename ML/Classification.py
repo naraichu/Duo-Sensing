@@ -56,7 +56,7 @@ print(y)
 print("\n")
 
 
-# Splitting the data
+# Splitting the data (Cross-validation)
 x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=size, random_state=random)
 
 
@@ -194,18 +194,23 @@ if __name__ == '__main__':
 
     ax[0].set_title('SVM')
     ax[0].imshow(svm_con, interpolation='none', cmap='viridis')
+    ax[0].set_aspect('equal')
 
     ax[1].set_title('LR')
     ax[1].imshow(lr_con , interpolation='none', cmap='viridis')
+    ax[1].set_aspect('equal')
 
     ax[2].set_title('NB')
     ax[2].imshow(nb_con , interpolation='none', cmap='viridis')
+    ax[2].set_aspect('equal')
 
     ax[3].set_title('NN')
     ax[3].imshow(nn_con , interpolation='none', cmap='viridis')
+    ax[3].set_aspect('equal')
 
     ax[4].set_title('RF')
     ax[4].imshow(rf_con , interpolation='none', cmap='viridis')
+    ax[4].set_aspect('equal')
     
     #plt.tight_layout()
 
