@@ -29,7 +29,6 @@ cap_y_back_axis = np.zeros(freq_len + 2, dtype=int)
 # Initialized matplotlib for visualization
 fig, (ax1, ax2) = plt.subplots(2, 1, gridspec_kw={'hspace': 1.0})
 
-
 # Global variables to keep track of time steps and resistive values
 time_steps = []
 res_array = []
@@ -175,7 +174,7 @@ def update(frame):
     # Update plots
     ax1.clear()
     ax1.grid(True)
-    ax1.plot(cap_x_axis, cap_y_axis, 'b-', markersize=1)
+    ax1.plot(cap_x_axis, cap_y_axis, '#28A4D9', markersize=1)
     ax1.set(title='Swept Frequency Capacitive Sensing',
             xlabel='Frequency',
             ylabel='Amplitude',
@@ -184,7 +183,7 @@ def update(frame):
 
     ax2.clear()
     ax2.grid(True)
-    ax2.plot(time_steps, res_array, 'g-', markersize=1)
+    ax2.plot(time_steps, res_array, '#2EBA33', markersize=1)
     ax2.plot([time_steps[i] for i in peaks], [res_array[i] for i in peaks], 'o')  # Plot peaks with 'o'
     ax2.set(title='Resistive Sensing',
             xlabel='Time steps',
