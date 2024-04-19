@@ -23,10 +23,11 @@ ser = serial.Serial('COM12', 115200)
 isStart = False
 
 # Classified actions
-action = ["None", "Fingers", "Fist", "Palm", "Side"] #<---- !!! Make sure to change based on use case
+#action = ["None", "Fingers", "Fist", "Palm", "Side"] #<---- !!! Make sure to change based on use case
+action = ["Two finger (With insulation)", "Two finger (Without insulation)"] #<---- !!! Make sure to change based on use case
 
 # Number of datasets per actions
-step = 5
+step = 50
 
 # Total length of the JSON
 total_len = step * len(action)

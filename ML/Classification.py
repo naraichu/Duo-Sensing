@@ -161,8 +161,6 @@ def RF():
 
 # Main functions
 if __name__ == '__main__':
-    
-    ''''''
     # Train, save and test models
     svm_acc, svm_con = SVM()
     lr_acc , lr_con  = LR()
@@ -170,14 +168,19 @@ if __name__ == '__main__':
     nn_acc , nn_con  = NN()
     rf_acc , rf_con  = RF()
     
-    # Initilisation
-    fig, ax = plt.subplots(nrows=1, ncols=5, figsize=(9, 6))
-
     '''
     # Declare bar graphs
     classifiers = ['SVM', 'LR', 'NB', 'NN', 'RF']
     accuracies = [svm_acc, lr_acc, nb_acc, nn_acc, rf_acc]
     colours = ['#31bbc4', '#60d950', '#eb9c1e', '#d64836', '#d1119b']
+
+    # Round to 2 decimal places
+    for i in range (0,len(classifiers)):
+        accuracies[i] = round(accuracies[i], 2)
+
+    # Initilisation
+    fig, ax = plt.subplots()
+    ax.bar(classifiers, accuracies, color=colours)
 
     # Plot bar graphs
     ax.bar(classifiers, accuracies, label= accuracies, color = colours)
@@ -190,6 +193,8 @@ if __name__ == '__main__':
     # Show graph
     plt.show()
     '''
+    
+    fig, ax = plt.subplots(nrows=1, ncols=5, figsize=(9, 6))
     fig.suptitle('Confusion matrix')
 
     ax[0].set_title('SVM')
@@ -213,7 +218,8 @@ if __name__ == '__main__':
     ax[4].set_aspect('equal')
     
     #plt.tight_layout()
-
+    
     plt.show()
+    
 
     
