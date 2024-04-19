@@ -9,3 +9,7 @@ Swept-frequency capacitive sensing (SFCS) represents an advanced capacitive sens
 
 ## Overview
 This repository contains both the code and documentation necessary for implementing swept-frequency capacitive sensing on conductive TPU (Thermoplastic Polyurethane) filament. Swept-frequency capacitive sensing entails detecting changes in capacitance across a range of frequencies, enabling precise and dynamic touch or proximity sensing.
+
+
+## Duo-sensing circuit
+![Circuit_Schematics](https://github.com/naraichu/Duo-Tactile/assets/67613808/03fbf6cd-0c9d-40ed-b8dd-75a2a1b8afe3)
