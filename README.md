@@ -1,4 +1,4 @@
-# Duo-Tactile: Customisable Tactile Interaction Inputs with Sensings
+# Duo-Sensing: 3D Printing Free-form Flexible Devices to Simultaneously Support Touch Input and Stable Deformation Sensing
 ![Intro_pic](https://github.com/naraichu/Duo-Tactile/assets/67613808/ac059578-8b24-42b1-9b45-dfe2e44dc7b3)
 
 ## Introduction
