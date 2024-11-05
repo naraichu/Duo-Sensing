@@ -15,4 +15,7 @@ This repository contains both the code and documentation necessary for implement
 ## Duo-Sensing circuit
 ![Circuit_Schematics](https://github.com/naraichu/Duo-Tactile/assets/67613808/03fbf6cd-0c9d-40ed-b8dd-75a2a1b8afe3)
 
-The potentiometer, as seen in the diagram within the Wheatstone Bridge, is the digital integrated circuit (IC) potentiometer [X9C103](https://www.renesas.com/us/en/document/dst/x9c102-x9c103-x9c104-x9c503-datasheet) which has a maximum resistance of 10kΩ and 100 incremental steps, thus providing a resolution of 0.1kΩ. Other X9C ICs can also be used for different ranges of resistance. External resistors (Ext res) can be connected in series next to the X9C103 to increase the resistance range that matches the TPU printwork.
+The potentiometer, as seen in the diagram within the Wheatstone Bridge, is the digital integrated circuit (IC) potentiometer [X9C103](https://www.renesas.com/us/en/document/dst/x9c102-x9c103-x9c104-x9c503-datasheet) which has a maximum resistance of 10kΩ and 100 incremental steps, thus providing a resolution of 0.1kΩ. Other X9C ICs can also be used for different ranges of resistance. External resistors (Ext res) can be connected in series next to the X9C103 to increase the resistance range that matches the TPU printwork
+
+## Limitations
+Duo-Sensing serial communication is not well implemented, which can lead to occasional interruptions in the bit streams. This has resulted in poor data quality for training the machine learning model.
